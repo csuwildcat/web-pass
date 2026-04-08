@@ -1,147 +1,46 @@
-# PassSeeds
+# Web Pass
 
-PassSeeds is a technical experiment that explores how WebAuthn passkeys can be hijacked to unlock broader cryptographic use cases. Instead of restricting passkeys to login scenarios, PassSeeds derives cryptographic seed material from passkeys in a way that lets apps generated a wide array of cryptographic keys (beyond the standard WebAuthn-supported curves), while retaining the strongly authenticaed biometric UX of passkeys.
+Web Pass is an early-stage reset of the prior codebase to explore a new
+approach to web-based credentials. The core API is intentionally minimal while
+the direction is being defined.
+
+## Status
+
+- API and implementation are under active design
+- Project structure is preserved while core logic is reset
 
 ## Features
 
-- **Passkey-gated seed creation**: Create passkeys and derive deterministic seed material
-- **Mnemonic export**: Convert seed bytes or seed strings into 12- or 24-word BIP39 mnemonic phrases for easy backup
-- **Cross-device access**: PassSeeds are synced across devices by the built-in passkey syncing mechanism.
-- **Elegant UX**: Leverages WebAuthn's origin-bound biometric/multi-factor UX
+- Placeholder for upcoming Web Pass capabilities
+- TypeScript-first package scaffolding
+- Browser demo shell for future iterations
 
 ## Installation
 
 ```bash
-npm install passseeds
+npm install web-pass
 ```
 
 ## Documentation
 
 - [QUICKSTART.md](./QUICKSTART.md) - Usage + local development
-- [SECURITY.md](./SECURITY.md) - Security model
+- [SECURITY.md](./SECURITY.md) - Security model (in progress)
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - How to contribute
 
 ## Usage
 
-### Create a PassSeed
-
 ```typescript
-import { PassSeed } from 'passseeds';
+import { WebPass } from 'web-pass/wallet';
+import 'web-pass/app';
 
-const seedString = await PassSeed.create({
-  user: "Alice B. Carol",
-  seedName: "My Seed"
-});
-console.log(seedString);
-```
-
-### Export as Mnemonic
-
-```typescript
-const mnemonic = await PassSeed.toMnemonic(seedString, 12);
-console.log(mnemonic); // 12-word phrase
-```
-
-### Retrieve Existing PassSeed
-
-```typescript
-// Prompts user to authenticate with passkey
-const seedString = await PassSeed.get();
-
-// Or target a specific credential
-const seedString = await PassSeed.get({ credentialId });
-
-// Or pause between prompts to show custom UI
-const seedString = await PassSeed.get({
-  credentialId,
-  onBeforeSecondSignature: async () => {
-    showSecondPromptUI();
-    await waitForUserConfirmation();
-  }
-});
-```
-
-### Utility Functions
-
-```typescript
-// Convert hex seed string to bytes
-const bytes = PassSeed.hexToBytes(seedString);
-
-// Convert bytes back to hex
-const hex = PassSeed.bytesToHex(bytes);
+// TODO: Use the Web Pass API once it is defined.
+console.log(WebPass);
 ```
 
 ## API Reference
 
-### `PassSeed.create(options?: { user?: string; seedName?: string }): Promise<string>`
-
-Creates a new P-256 passkey through the WebAuthn API and derives a deterministic 32-byte seed string (hex) from the public key. You'll be prompted to create a new passkey using your platform's authenticator.
-
-**Parameters**:
-- `options` (optional) - Labels shown in passkey UI
-- `options.user` (optional) - Display label (maps to WebAuthn user.displayName)
-- `options.seedName` (optional) - Seed name (maps to WebAuthn user.name)
-
-**Returns**: A 32-byte seed string derived from the passkey (hex)
-
-### `PassSeed.toMnemonic(passSeed: Uint8Array | string, wordCount?: 12 | 24): Promise<string>`
-
-Converts PassSeed bytes or a seed string into a human-readable BIP39 mnemonic phrase for easy backup and recovery.
-
-**Parameters**:
-- `passSeed` - Exactly 32 bytes of PassSeed data or a 32-byte hex seed string
-- `wordCount` (optional) - 12 or 24 word mnemonic length (default: 24)
-
-**Returns**: A 12- or 24-word BIP39 mnemonic phrase
-
-### `PassSeed.get(options?: { credentialId?: string; onBeforeSecondSignature?: () => void | Promise<void> }): Promise<string>`
-
-Retrieves an existing passkey and performs dual WebAuthn signatures to recover the P-256 public key. Requires that you've already created a passkey using `PassSeed.create()`.
-
-**Parameters**:
-- `options` (optional) - Passkey lookup options
-- `options.credentialId` (optional) - Specific credential ID (base64url) to target
-- `options.onBeforeSecondSignature` (optional) - Async hook before the second signature request
-
-**Returns**: A 32-byte seed string derived from the passkey (hex)
-
-### `PassSeed.bytesToHex(bytes: Uint8Array): string`
-
-Converts a Uint8Array to a hex string for easy display and storage.
-
-### `PassSeed.hexToBytes(hex: string): Uint8Array`
-
-Converts a hex string back to a Uint8Array.
-
-## How It Works
-
-### Enrollment
-
-1. Call `PassSeed.create()` to create a new passkey
-2. The passkey is stored in your platform's secure hardware (never exported)
-3. Metadata about the passkey is persisted locally
-
-### Seed Recovery
-
-1. When you need the seed material, call `PassSeed.get()`
-2. You'll be prompted to authenticate with your passkey twice (for ECDSA public key recovery)
-3. The dual signatures are used to recover the public key and disambiguate the correct point
-4. The public key is hashed into a deterministic 32-byte seed string
-
-### Mnemonic Export
-
-1. Take any 32-byte PassSeed
-2. Call `PassSeed.toMnemonic()` to get a 12- or 24-word phrase
-3. The same PassSeed always generates the same mnemonic
-4. Different PassSeeds generate different mnemonics
-
-## Threat Model
-
-- **Origin binding**: Passkeys are scoped to specific origins, preventing cross-site attacks
-- **User verification**: All operations require biometric or PIN verification
-- **In-page exposure**: Upon retrieval in the page of the bound origin, the seed is accessible to code running in the page. If the page is loaded from a website or remote host, it is possible for a malicious host, or actor who compromises the host's dependencies, to exfiltrate it.
-- **Comparable abuse**: Even if users leverage raw passkeys that do not have any page exposure of their private key, a malicious host or bad actor that compromises the page's dependencies could trick a user into signing harmful payloads with their passkey, leading to similar outcomes.
-- **Best practice for use**: It is strongly recommended that PassSeeds be generated and used from locally run web apps where the passkey is not tied to a remote entity controlling the page environment. If you use a PassSeed generated by an origin controlled by a remote host, there is a high degree of trust required, so it is inadvisable to tied large sums of money or sensitive data to it in that case.
+The Web Pass API is being redesigned. Expect this section to change once the
+new direction is finalized.
 
 ## Development
 
@@ -152,11 +51,12 @@ npm run build      # Compile TypeScript + browser bundle
 npm run dev        # Watch mode compilation
 npm run dev:demo   # Watch mode + live demo reload
 npm test           # Run tests
-npm run demo       # Start interactive demo
+npm run demo       # Start interactive demo shell
 ```
 
-Build outputs to `dist/index.js` and `dist/index.d.ts`. The demo server runs at
-`http://localhost:8080` and reloads on changes.
+Build outputs to `dist/index.js`, `dist/wallet.js`, and `dist/app.js` with
+matching `.d.ts` files. The demo server runs at `http://localhost:8080` and
+reloads on changes.
 
 ### Publishing (maintainers)
 
@@ -171,14 +71,17 @@ The package ships from `dist/` via the `exports` map in `package.json`.
 ## Project Structure
 
 ```
-passseeds/
+web-pass/
 ├── src/
-│   ├── index.ts           # Core PassSeed implementation
+│   ├── app.ts            # App-side Web Pass entry point
+│   ├── wallet.ts         # Wallet-side Web Pass entry point
+│   ├── utils.ts          # Shared helpers
+│   ├── index.ts          # Aggregated entry point
 │   └── tests/
-│       └── passseeds.test.ts
+│       └── web-pass.test.ts
 ├── dist/                  # Compiled output
 ├── demo/
-│   └── index.html        # Interactive web demo
+│   └── index.html        # Demo shell
 ├── scripts/
 │   ├── serve-demo.js     # Demo server with live reload
 │   └── dev.js            # Dev runner (tsc watch + optional demo)
@@ -187,19 +90,6 @@ passseeds/
 └── [documentation files]
 ```
 
-## Use Cases
-
-- **Passkey-gated Bitcoin wallet**: Derive secp256k1 keys for transaction signing without a hot seed
-- **ZKP credential agent**: Derive proving keys tied to the passkey for verified presentations
-- **Sealed personal storage**: Encrypt data with keys derived from the PassSeed
-- **Multi-party controls**: Combine multiple PassSeeds for shared cryptographic operations
-
 ## License
 
 MIT
-
-## References
-
-- [WebAuthn Specification](https://www.w3.org/TR/webauthn-2/)
-- [BIP39 Mnemonic Code](https://github.com/trezor/python-mnemonic)
-- [ECDSA Key Recovery](https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm)

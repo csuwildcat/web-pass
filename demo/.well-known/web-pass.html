@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Web Pass Connect</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap');
+
+      :root {
+        font-family: "Space Grotesk", "Avenir Next", "Gill Sans", sans-serif;
+        color: #1b1a16;
+        background: #f7f3ed;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      main {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem 1.5rem;
+      }
+
+      .panel {
+        width: min(420px, 90vw);
+        background: #fffaf2;
+        border-radius: 24px;
+        padding: 2rem;
+        border: 1px solid rgba(27, 26, 22, 0.08);
+        box-shadow: 0 20px 40px rgba(27, 26, 22, 0.12);
+        display: grid;
+        gap: 1rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+        margin: 0;
+      }
+
+      .note {
+        font-size: 0.95rem;
+        color: #6a5d4d;
+        line-height: 1.5;
+      }
+
+      .is-hidden {
+        display: none !important;
+      }
+
+      #status {
+        font-size: 0.9rem;
+        color: #6a5d4d;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="panel">
+        <h1>Web Pass Connect</h1>
+        <p class="note">
+          Enter your Web Pass seed phrase to authorize this request. Confirm or
+          deny the request to continue. A demo auth JWT is included in the
+          response for the app to store.
+        </p>
+        <web-pass-form id="web-pass-connect" flow="connect" auth-jwt="demo.jwt.token"></web-pass-form>
+        <p id="status">Waiting for a request...</p>
+      </section>
+    </main>
+
+    <script type="module">
+      import '/dist/wallet.js';
+
+      const connectElement = document.getElementById('web-pass-connect');
+      const status = document.getElementById('status');
+
+      const useSeedField = (element) => {
+        if (!element) {
+          return;
+        }
+        const usernameInput = element.querySelector('input[data-role="username"]');
+        const label = usernameInput?.closest('label') ?? null;
+        if (usernameInput) {
+          usernameInput.remove();
+        }
+        if (label) {
+          const textNode = Array.from(label.childNodes).find(
+            (node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim()
+          );
+          if (textNode) {
+            textNode.textContent = 'Seed phrase';
+          }
+        }
+        const seedInput = element.querySelector('input[data-role="seed"]');
+        if (seedInput) {
+          seedInput.style.position = 'static';
+          seedInput.style.opacity = '1';
+          seedInput.style.pointerEvents = 'auto';
+          seedInput.style.inset = 'auto';
+        }
+      };
+
+      connectElement?.addEventListener('webpass:connect-response', (event) => {
+        const result = event.detail?.result || 'unknown';
+        if (status) {
+          status.textContent = `Response sent: ${result}.`;
+        }
+      });
+
+      connectElement?.addEventListener('webpass:connect-error', (event) => {
+        const message = event.detail?.message || event.detail?.error || 'Connect failed.';
+        if (status) {
+          status.textContent = message;
+        }
+      });
+
+      await customElements.whenDefined('web-pass-form');
+      useSeedField(connectElement);
+    </script>
+  </body>
+</html>

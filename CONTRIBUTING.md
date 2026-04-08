@@ -1,4 +1,4 @@
-# Contributing to PassSeeds
+# Contributing to Web Pass
 
 Contributions are welcome! Please follow these guidelines:
 

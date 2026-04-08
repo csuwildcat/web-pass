@@ -81,12 +81,17 @@ async function start() {
   try {
     let hasBuiltOnce = false;
     buildContext = await context({
-      entryPoints: [path.join(ROOT_DIR, 'src/index.ts')],
+      entryPoints: [
+        path.join(ROOT_DIR, 'src/index.ts'),
+        path.join(ROOT_DIR, 'src/wallet.ts'),
+        path.join(ROOT_DIR, 'src/app.ts')
+      ],
       bundle: true,
       format: 'esm',
       platform: 'browser',
       target: 'es2020',
-      outfile: path.join(ROOT_DIR, 'dist/index.js'),
+      outdir: path.join(ROOT_DIR, 'dist'),
+      entryNames: '[name]',
       inject: [path.join(ROOT_DIR, 'scripts/buffer-shim.js')],
       plugins: [
         {
@@ -163,7 +168,10 @@ async function start() {
       }
 
       const ext = path.extname(filePath);
-      const contentType = mimeTypes[ext] || 'application/octet-stream';
+      let contentType = mimeTypes[ext] || 'application/octet-stream';
+      if (!ext && filePath.startsWith(path.join(DEMO_DIR, '.well-known'))) {
+        contentType = 'text/html';
+      }
       let body = content;
 
       if (ext === '.html' && filePath.startsWith(DEMO_DIR)) {
@@ -176,7 +184,7 @@ async function start() {
   });
 
   server.listen(PORT, () => {
-    console.log(`🎉 PassSeeds demo running at http://localhost:${PORT}`);
+    console.log(`🎉 Web Pass demo running at http://localhost:${PORT}`);
     console.log('🔁 Live reload enabled for demo/ and dist/');
     console.log('\nPress Ctrl+C to stop the server\n');
   });

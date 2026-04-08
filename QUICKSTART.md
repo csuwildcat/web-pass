@@ -1,66 +1,83 @@
 # Quick Start
 
-This guide covers both basic usage and local development setup for PassSeeds.
-If you only need the API, start with "Basic usage". If you are working on this
-repo, jump to "Development".
+This guide covers basic usage and local development setup for Web Pass. The API
+is still in flux, so the usage section is intentionally minimal.
 
 ## Installation
 
 ```bash
-npm install passseeds
+npm install web-pass
 ```
 
 ## Basic usage
 
-### Import
+### Custom element (recommended)
 
-```typescript
-import { PassSeed } from 'passseeds';
+```html
+<web-pass-form></web-pass-form>
 ```
 
-### Create a new PassSeed
+Web Pass defaults to BIP-39 words for the stored password seed.
 
 ```typescript
-const seedString = await PassSeed.create({
-  user: "Alice B. Carol",
-  seedName: "My Seed"
-});
-console.log(seedString);
-```
+import 'web-pass/wallet';
 
-### Export as a mnemonic phrase
-
-```typescript
-const mnemonic = await PassSeed.toMnemonic(seedString, 12);
-console.log(mnemonic);
-```
-
-### Retrieve and recover a PassSeed
-
-```typescript
-const recovered = await PassSeed.get();
-console.log(recovered === seedString);
-```
-
-```typescript
-const recoveredById = await PassSeed.get({ credentialId });
-```
-
-```typescript
-const recoveredWithUi = await PassSeed.get({
-  onBeforeSecondSignature: async () => {
-    showSecondPromptUI();
-    await waitForUserConfirmation();
-  }
+const element = document.querySelector('web-pass-form');
+element?.addEventListener('webpass:create', (event) => {
+  console.log('Created Web Pass:', event.detail);
 });
 ```
 
-### Utilities
+### Bring-your-own form
+
+Your form **must** include a username, password, and locator input with the
+correct `name` or `autocomplete` attributes shown below. The locator and
+password inputs should be read-only because they are derived from the label and
+seed generator.
+
+```html
+<form id="web-pass-form" autocomplete="on" method="post">
+  <input name="username" autocomplete="username" />
+  <input name="email" autocomplete="email" readonly />
+  <input name="password" autocomplete="new-password" type="password" readonly />
+</form>
+```
 
 ```typescript
-const bytes = new Uint8Array(32);
-const hex = PassSeed.bytesToHex(bytes);
-const restored = PassSeed.hexToBytes(hex);
+import { WebPass } from 'web-pass/wallet';
+
+const webPass = new WebPass({ form: '#web-pass-form' });
+const entry = webPass.createPass();
+console.log(entry);
+```
+
+### Connect flow (app + popup)
+
+App pages that want to request a Web Pass should render the app-side connect
+element and provide the action, key type, and (for login) a challenge string to
+sign. For `sign`, set `action-payload` to the string to sign.
+
+```html
+<web-pass-connect
+  action="login"
+  key-type="secp256k1"
+  challenge="nonce-from-server"
+></web-pass-connect>
+```
+
+```typescript
+import 'web-pass/app';
+```
+
+The Web Pass origin should host a `/.well-known/web-pass` page that includes
+the wallet-side element in connect flow to handle the popup confirmation UI:
+
+```html
+<web-pass-form flow="connect"></web-pass-form>
+```
+
+```typescript
+import 'web-pass/wallet';
 ```
 
 ## Browser demo (optional)
@@ -70,8 +87,9 @@ npm install
 npm run demo
 ```
 
-This starts a local server at `http://localhost:8080` with the interactive demo.
-The demo uses the bundled browser build at `dist/index.js` and reloads on changes.
+This starts a local server at `http://localhost:5330` with the demo shell. The
+demo uses the bundled browser builds at `dist/wallet.js` and `dist/app.js` and
+reloads on changes.
 
 ## Development (if working on this repo)
 
@@ -79,12 +97,12 @@ The demo uses the bundled browser build at `dist/index.js` and reloads on change
 
 - Node.js 20.19+
 - npm or pnpm
-- A modern browser with WebAuthn support
+- A modern browser
 
 ### Setup
 
 ```bash
-cd /Users/daniel/repos/passseeds
+cd /Users/daniel/repos/web-pass
 npm install
 ```
 
@@ -109,14 +127,17 @@ Tests live in `src/tests/` and are compiled to `dist/tests/` during builds.
 ### Project structure
 
 ```
-passseeds/
+web-pass/
 ├── src/
-│   ├── index.ts           # Core PassSeed implementation
+│   ├── app.ts            # App-side Web Pass entry point
+│   ├── wallet.ts         # Wallet-side Web Pass entry point
+│   ├── utils.ts          # Shared helpers
+│   ├── index.ts          # Aggregated entry point
 │   └── tests/
-│       └── passseeds.test.ts
+│       └── web-pass.test.ts
 ├── dist/                  # Compiled output
 ├── demo/
-│   └── index.html        # Interactive web demo
+│   └── index.html        # Demo shell
 ├── scripts/
 │   ├── serve-demo.js     # Demo server with live reload
 │   └── dev.js            # Dev runner (tsc watch + optional demo)
@@ -127,7 +148,6 @@ passseeds/
 
 ## Troubleshooting
 
-- WebAuthn requires HTTPS in production; `localhost` is allowed for testing.
 - If the demo does not load, run `npm run demo` and check the browser console.
 - If builds fail, run `npm run build` to see compiler errors.
 

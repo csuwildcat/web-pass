@@ -1,668 +1,1230 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" class="wa-dark">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PassSeeds Demo</title>
-  <link rel="icon" type="image/svg+xml" href="./sapling-icon-green.svg">
-  <link rel="icon" type="image/png" href="./sapling-icon-green.png">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Web Pass Demo</title>
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <script src="https://kit.webawesome.com/c6c493f4b671436f.js" crossorigin="anonymous"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+    :root {
+      color-scheme: dark;
+      font-family: var(--wa-font-family-sans, "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif);
+      --wa-font-family-sans: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+      --wa-font-family-mono: "DM Mono", "SFMono-Regular", "Courier New", monospace;
+      --demo-bg: #0a0f1a;
+      --demo-panel: rgba(15, 19, 30, 0.88);
+      --demo-border: rgba(148, 163, 184, 0.18);
+      --demo-ink: #12141c;
+      --demo-light: #f7f6f2;
+      --demo-light-muted: #6b7280;
+      --demo-light-border: rgba(15, 23, 42, 0.12);
+      --demo-accent: var(--wa-color-brand-60);
+      --demo-accent-strong: var(--wa-color-brand-50);
+    }
+
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: linear-gradient(135deg, #cdcdcd 20%, #1a6839 100%);
+      margin: 0;
       min-height: 100vh;
-      padding: 3rem 1.25rem;
-      color: #333;
+      background: var(--demo-bg);
+      color: var(--wa-color-text-normal);
     }
 
-    .github-ribbon {
-      position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 1000;
-      text-decoration: none;
-      display: block;
-      height: 130px;
-      width: 130px;
-      overflow: hidden;
-    }
-
-    .github-ribbon span {
-    position: relative;
-    top: 25px;
-    right: 0px;
-    width: 170px;
-    padding: 0.5rem 0;
-    background: #e6e6e6;
-    color: #000;
-    text-align: center;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: 2px solid #000;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-    transform: rotate(45deg);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    }
-
-    .github-ribbon svg {
- width: 20px;
-    height: 20px;
-    vertical-align: -2px;
-    fill: currentColor;
-    }
-
-    .github-ribbon:hover span,
-    .github-ribbon:focus-visible span {
-      background: #dcdcdc;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    header {
-      text-align: center;
-      color: white;
-      margin-bottom: 3rem;
-    }
-
-    header .logo {
-      width: min(360px, 80vw);
-      height: auto;
-      display: block;
-      margin: 0 auto 0.75rem;
-    }
-
-    header .subtitle {
-      font-size: 1rem;
-      opacity: 0.9;
-      margin-top: 0.5rem;
-      color: #000;
-    }
-
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .card h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      color: #1a6839;
-      border-bottom: 2px solid #1a6839;
-      padding-bottom: 0.5rem;
-    }
-
-    .method {
-      margin-bottom: 1.5rem;
-    }
-
-    .method p {
-      margin-bottom: 1rem;
-      color: #666;
-      line-height: 1.6;
-    }
-
-    button {
-      background: #1a6839;
-      color: white;
-      border: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-right: 0.5rem;
-      margin-bottom: 1rem;
-    }
-
-    button:hover {
-      background: #1a6839;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(26, 104, 57, 0.4);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-
-    .form-fields {
-      display: grid;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .form-field {
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .form-field label {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #1a6839;
-    }
-
-    .form-field input {
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 0.6rem 0.75rem;
-      font-size: 1rem;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .form-field input:focus {
-      outline: none;
-      border-color: #1a6839;
-      box-shadow: 0 0 0 3px rgba(26, 104, 57, 0.15);
-    }
-
-    .output {
-      background: #f5f5f5;
-      border-left: 4px solid #1a6839;
-      padding: 1rem;
-      border-radius: 4px;
-      margin-top: 1rem;
-      font-family: "Monaco", "Courier New", monospace;
-      font-size: 0.9rem;
-      max-height: 300px;
-      overflow-y: auto;
-      word-break: break-all;
-    }
-
-    .output.error {
-      border-left-color: #f56565;
-      background: #fff5f5;
-      color: #f56565;
-    }
-
-    .output.success {
-      border-left-color: #48bb78;
-      background: #f0fff4;
-      color: #22543d;
-    }
-
-    .status {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-
-    .status.loading {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .status.success {
-      background: #d1fae5;
-      color: #065f46;
-    }
-
-    .status.error {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .warning {
-      background: #fef3c7;
-      border-left: 4px solid #f59e0b;
-      padding: 1rem;
-      border-radius: 4px;
-      margin: 1rem 0;
-      color: #92400e;
-    }
-
-    .info {
-      background: #dbeafe;
-      border-left: 4px solid #1a6839;
-      padding: 1rem;
-      border-radius: 4px;
-      margin: 1rem 0;
-      color: #1e40af;
-    }
-
-    code {
-      background: #f0f0f0;
-      padding: 0.2rem 0.4rem;
-      border-radius: 3px;
-      font-family: "Monaco", "Courier New", monospace;
-    }
-
-    .feature-list {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    .feature-list li {
-      padding: 0.5rem 0;
-      padding-left: 1.5rem;
-      position: relative;
-    }
-
-    .feature-list li:before {
-      content: "✓";
-      position: absolute;
-      left: 0;
-      color: #48bb78;
-      font-weight: bold;
-    }
-
-    footer {
-      text-align: center;
-      color: white;
-      margin-top: 3rem;
-      opacity: 0.8;
-    }
-
-    .mnemonic-display {
-      background: #f0f0f0;
-      padding: 1.5rem;
-      border-radius: 8px;
-      margin: 1rem 0;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 0.5rem;
-    }
-
-    .word {
-      background: white;
-      padding: 0.5rem;
-      border-radius: 4px;
-      text-align: center;
-      border: 1px solid #ddd;
-      font-family: monospace;
-      font-size: 0.9rem;
-    }
-
-    .modal {
+    body::before {
+      content: "";
       position: fixed;
       inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(59, 130, 246, 0.22), transparent 48%),
+        radial-gradient(circle at 80% 12%, rgba(16, 185, 129, 0.18), transparent 40%),
+        radial-gradient(circle at 70% 85%, rgba(236, 72, 153, 0.16), transparent 45%);
       pointer-events: none;
-      transition: opacity 0.3s ease;
-      z-index: 2000;
+      z-index: 0;
     }
 
-    .modal.is-visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-    }
-
-    .modal-panel {
+    main.page {
       position: relative;
       z-index: 1;
-      background: #ffffff;
-      border-radius: 12px;
-      padding: 2rem;
-      width: min(520px, 92vw);
-      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.35);
-      text-align: center;
-      transform: translateY(12px);
-      transition: transform 0.3s ease;
+      width: min(1120px, 92vw);
+      margin: 0 auto 4rem;
+      padding: 3rem 0.5rem 0;
+      display: grid;
+      gap: 2.5rem;
+      animation: floatIn 0.6s ease-out both;
     }
 
-    .modal.is-visible .modal-panel {
-      transform: translateY(0);
+    header.hero {
+      display: grid;
+      gap: 1rem;
+      padding: 0.5rem 0.3rem;
     }
 
-    .modal-panel h3 {
-      margin-bottom: 0.75rem;
-      color: #1a6839;
+    .hero-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    .modal-panel p {
-      color: #475569;
-      margin-bottom: 1.5rem;
+    .hero-logo {
+      width: clamp(2.6rem, 4vw, 3.4rem);
+      height: clamp(2.6rem, 4vw, 3.4rem);
+      opacity: 0.92;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.6rem, 4vw, 3.4rem);
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      margin: 0 0 0.35rem;
+      font-size: 1.35rem;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 62ch;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--wa-color-text-quiet);
+    }
+
+    .demo-tabs {
+      width: 100%;
+      --track-color: rgba(226, 232, 240, 0.35);
+    }
+
+    .demo-tabs wa-tab-panel {
+      padding-top: 1.5rem;
+    }
+
+    .panel-card {
+      display: block;
+      padding-bottom: 1rem;
+    }
+
+    .panel-content {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .note {
+      margin: 0;
+      color: var(--wa-color-text-quiet);
       line-height: 1.5;
     }
 
-    .modal-panel button {
+    .panel-grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      align-items: start;
+    }
+
+    .web-pass-shell {
+      background: color-mix(in oklab, var(--wa-color-surface-raised), transparent 12%);
+      border-radius: 18px;
+      padding: 1.25rem;
+      border: 1px solid color-mix(in oklab, var(--wa-color-surface-border), transparent 20%);
+      box-shadow: 0 16px 32px rgba(4, 8, 20, 0.45);
+      color: var(--wa-color-text-normal);
+    }
+
+    web-pass-form {
+      display: block;
+    }
+
+    .web-pass-shell .form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .web-pass-shell label {
+      display: grid;
+      gap: 0.45rem;
+      font-weight: var(--wa-form-control-label-font-weight);
+      line-height: var(--wa-form-control-label-line-height);
+      color: var(--wa-form-control-label-color);
+    }
+
+    .web-pass-shell input {
+      font: inherit;
+      width: 100%;
+      height: var(--wa-form-control-height);
+      padding: 0 var(--wa-form-control-padding-inline);
+      font-size: var(--wa-form-control-value-font-size, var(--wa-font-size-m));
+      font-weight: var(--wa-form-control-value-font-weight);
+      line-height: var(--wa-form-control-value-line-height);
+      border-radius: var(--wa-form-control-border-radius);
+      border-color: var(--wa-form-control-border-color);
+      border-style: var(--wa-form-control-border-style);
+      border-width: var(--wa-form-control-border-width);
+      background-color: var(--wa-form-control-background-color);
+      color: var(--wa-form-control-value-color);
+      transition:
+        background-color var(--wa-transition-normal),
+        border var(--wa-transition-normal),
+        outline var(--wa-transition-fast);
+      transition-timing-function: var(--wa-transition-easing);
+    }
+
+    .web-pass-shell input:focus {
+      outline: none;
+    }
+
+    .web-pass-shell input:focus-visible {
+      outline: var(--wa-focus-ring);
+      outline-offset: var(--wa-focus-ring-offset);
+    }
+
+    .web-pass-shell input::placeholder {
+      color: var(--wa-form-control-placeholder-color);
+    }
+
+    .web-pass-shell input[readonly] {
+      background-color: color-mix(in oklab, var(--wa-form-control-background-color), black 8%);
+      color: var(--wa-color-text-quiet);
+      border-color: color-mix(in oklab, var(--wa-form-control-border-color), transparent 35%);
+      cursor: not-allowed;
+    }
+
+    .web-pass-shell .buttons,
+    .web-pass-shell .web-pass-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .web-pass-shell button {
+      font: inherit;
+      height: var(--wa-form-control-height);
+      padding: 0 var(--wa-form-control-padding-inline);
+      font-size: var(--wa-form-control-value-font-size, var(--wa-font-size-m));
+      font-weight: var(--wa-font-weight-action);
+      line-height: 1;
+      border-radius: var(--wa-form-control-border-radius);
+      border-style: var(--wa-border-style);
+      border-width: var(--wa-form-control-border-width);
+      cursor: pointer;
+      transition:
+        background-color var(--wa-transition-fast),
+        border-color var(--wa-transition-fast),
+        color var(--wa-transition-fast),
+        box-shadow var(--wa-transition-fast);
+      transition-timing-function: var(--wa-transition-easing);
+    }
+
+    .web-pass-shell button:focus {
+      outline: none;
+    }
+
+    .web-pass-shell button:focus-visible {
+      outline: var(--wa-focus-ring);
+      outline-offset: var(--wa-focus-ring-offset);
+    }
+
+    .web-pass-shell button.primary {
+      background-color: var(--wa-color-brand-fill-loud);
+      color: var(--wa-color-brand-on-loud);
+      border-color: transparent;
+    }
+
+    .web-pass-shell button.secondary {
+      background-color: transparent;
+      color: var(--wa-color-neutral-on-quiet);
+      border-color: var(--wa-color-neutral-border-loud);
+    }
+
+    .web-pass-shell button.ghost {
+      background: transparent;
+      color: var(--wa-color-neutral-on-quiet);
+      border-color: transparent;
+    }
+
+    .web-pass-shell button:not(:disabled):hover {
+      background-color: color-mix(in oklab,
+          currentColor,
+          transparent 94%);
+    }
+
+    .web-pass-shell button.primary:not(:disabled):hover {
+      background-color: color-mix(in oklab,
+          var(--wa-color-brand-fill-loud),
+          var(--wa-color-mix-hover));
+    }
+
+    .web-pass-shell button.primary:not(:disabled):active {
+      background-color: color-mix(in oklab,
+          var(--wa-color-brand-fill-loud),
+          var(--wa-color-mix-active));
+    }
+
+    .web-pass-shell button.secondary:not(:disabled):hover,
+    .web-pass-shell button.ghost:not(:disabled):hover {
+      background-color: var(--wa-color-neutral-fill-quiet);
+    }
+
+    .web-pass-shell button.secondary:not(:disabled):active,
+    .web-pass-shell button.ghost:not(:disabled):active {
+      background-color: color-mix(in oklab,
+          var(--wa-color-neutral-fill-quiet),
+          var(--wa-color-mix-active));
+    }
+
+    .result-card {
+      padding: 1.25rem;
+      border-radius: 18px;
+      border: 1px solid var(--demo-border);
+      background: var(--demo-panel);
+      box-shadow: 0 20px 40px rgba(4, 8, 20, 0.45);
+      display: grid;
+      gap: 0.75rem;
+      min-height: 180px;
+      position: relative;
+      overflow: visible;
+    }
+
+    .result-card.pass-output {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      min-height: 0;
+    }
+
+    .pass-card {
+      --pass-card-height: 230px;
+      position: relative;
+      width: min(420px, 100%);
+      margin: 0 auto;
+      padding-top: 1.4rem;
+      perspective: 1200px;
+    }
+
+    .pass-card-inner {
+      position: relative;
+      height: var(--pass-card-height);
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .pass-card.is-flipped .pass-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .pass-card-face {
+      position: relative;
+      display: grid;
+      border-radius: 20px;
+      border: 1px solid color-mix(in oklab, var(--wa-color-surface-border), transparent 45%);
+      background:
+        linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(8, 12, 24, 0.94)),
+        radial-gradient(circle at top right, rgba(94, 234, 212, 0.16), transparent 50%);
+      box-shadow: 0 18px 30px rgba(4, 8, 20, 0.5);
+      backface-visibility: hidden;
+      min-height: var(--pass-card-height);
+      height: var(--pass-card-height);
+      overflow: hidden;
+    }
+
+    .pass-card-front {
+      color: var(--wa-color-text-normal);
+      pointer-events: auto;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .pass-card-back {
+      position: absolute;
+      inset: 0;
+      transform: rotateY(180deg);
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      background:
+        linear-gradient(160deg, rgba(17, 24, 39, 0.96), rgba(15, 23, 42, 0.92)),
+        radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.18), transparent 55%);
+      pointer-events: none;
+    }
+
+    .pass-card.is-flipped .pass-card-front {
+      pointer-events: none;
+    }
+
+    .pass-card.is-flipped .pass-card-back {
+      pointer-events: auto;
+    }
+
+    .pass-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.2rem 0.5rem;
+      gap: 0.75rem;
+    }
+
+    .pass-card-title-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      min-width: 0;
+    }
+
+    .pass-card-header .pass-actions > * {
+      display: flex;
+    }
+
+    .pass-card-header .pass-actions {
+      flex-wrap: nowrap;
+      align-items: center;
+    }
+
+    .pass-hide-button::part(base) {
+      min-width: 0;
+      width: 2.1rem;
+      padding-inline: 0;
+      border-color: transparent;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .pass-hide-button wa-icon {
+      font-size: 0.95rem;
+    }
+
+
+    .pass-card-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0.5rem 0.65rem;
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid rgba(248, 250, 252, 0.08);
+    }
+
+    .pass-card-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(248, 250, 252, 0.76);
+    }
+
+    .pass-card-logo {
+      width: 18px;
+      height: 18px;
+      opacity: 0.9;
+    }
+
+    .pass-card-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .pass-card-center>* {
+      flex-shrink: 0;
+    }
+
+    .pass-card-bottom-bar {
+      border-bottom: none;
+      border-top: 1px solid rgba(248, 250, 252, 0.08);
+    }
+
+    .pass-card-bottom-bar .pass-actions {
+      flex-wrap: nowrap;
+    }
+
+    .pass-card-title {
+      font-size: 0.75rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--wa-color-text-quiet);
+    }
+
+    .pass-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 2px solid rgba(248, 250, 252, 0.45);
+      background: rgba(148, 163, 184, 0.22);
+      object-fit: cover;
+      box-shadow: 0 10px 20px rgba(15, 23, 42, 0.5);
+    }
+
+
+    .pass-avatar-fallback {
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: var(--demo-light);
+      text-transform: uppercase;
+    }
+
+    .pass-name {
       margin: 0;
+      font-size: 1.35rem;
+      font-weight: 600;
+      max-width: 14ch;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .pass-locator-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pass-locator {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--wa-color-text-quiet);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+
+    .pass-qr {
+      display: grid;
+      place-items: center;
+    }
+
+    wa-qr-code {
+      --size: 5rem !important;
+      border-radius: 0.2rem;
+      background: var(--demo-light);
+      box-shadow: 0 8px 16px rgba(15, 23, 42, 0.35);
+    }
+
+    wa-qr-code::part(base) {
+      padding: 0.3rem;
+    }
+
+    .pass-qr-placeholder {
+      width: 112px;
+      height: 112px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--demo-light);
+      border: 1px dashed rgba(248, 250, 252, 0.3);
+    }
+
+    .pass-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    .pass-seed {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: minmax(0, 1fr);
+      align-content: stretch;
+      justify-items: stretch;
+      gap: 0.45rem 0.7rem;
+      margin: 0;
+      padding: 0.5rem 0.9rem;
+      min-height: 0;
+      font-family: var(--wa-font-family-mono);
+      font-size: clamp(0.74rem, 0.52rem + 0.55vw, 0.88rem);
+      line-height: 1.2;
+      text-align: center;
+    }
+
+    .pass-seed-word {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-width: 0;
+      padding: 0.1rem 0.2rem;
+      overflow-wrap: anywhere;
+    }
+
+    .pass-hint {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      min-height: 2.85em;
+      font-size: 0.85rem;
+      text-align: center;
+      color: #a98a8a;
+      line-height: 1.4;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .result-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .result-row {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .pass-row {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .pass-row-inline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .pass-value {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .pass-row-inline .pass-value {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pass-row code,
+    .result-row code {
+      font-family: var(--wa-font-family-mono);
+      font-size: 0.9rem;
+      background: rgba(148, 163, 184, 0.14);
+      padding: 0.35rem 0.5rem;
+      border-radius: 8px;
+      display: inline-block;
+      word-break: break-word;
+    }
+
+    .pass-row code.secret {
+      filter: blur(6px);
+      transition: filter 0.2s ease;
+    }
+
+    .pass-row.revealed code.secret {
+      filter: blur(0);
+    }
+
+    .locator-value {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(148, 163, 184, 0.12);
+      border-radius: 999px;
+      padding: 0.1rem 0.4rem;
+      max-width: 100%;
+    }
+
+    .locator-value code {
+      background: transparent;
+      padding: 0.2rem 0.4rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .locator-copy {
+      margin-left: auto;
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 768px) {
+      main.page {
+        margin: 0 auto 3rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .pass-card {
+        --pass-card-height: 300px;
+      }
+
+      .pass-card-center {
+        gap: 0.75rem;
+      }
+
+      .pass-card-bar {
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+      }
+
+      .pass-name {
+        max-width: 12ch;
+        font-size: 1.15rem;
+      }
+
+      .pass-avatar {
+        width: 60px;
+        height: 60px;
+      }
+
+      wa-qr-code {
+        --size: 4.5rem !important;
+      }
+
+      .pass-seed {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.4rem 0.55rem;
+        padding: 0.45rem 0.75rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pass-card-inner {
+        transition: none;
+      }
+    }
+
+    @keyframes floatIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
+
 <body>
-  <a
-    class="github-ribbon"
-    href="https://github.com/csuwildcat/passseeds"
-    target="_blank"
-    rel="noopener"
-    aria-label="View PassSeeds on GitHub"
-  >
-    <span>
-      View on
-      <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8Z"></path>
-      </svg>
-    </span>
-  </a>
-  <div class="container">
-    <header>
-      <img class="logo" src="./logo.svg" alt="PassSeeds">
-      <div class="subtitle">Passkey-based cryptographic seed derivation</div>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-title">
+        <img class="hero-logo" src="logo.svg" alt="Web Pass logo">
+        <h1>Web Pass</h1>
+      </div>
+      <p class="subtitle">
+        Generate a single Web Pass seed phrase that powers all scoped credentials.
+        The locator always follows <strong>pass@DOMAIN</strong> for the wallet provider. Submit
+        the form to nudge the browser to save the credential pair.
+      </p>
     </header>
 
-    <div class="card">
-      <h2>About PassSeeds</h2>
-      <p>
-        PassSeeds is a technical experiment that leverages WebAuthn passkeys as the derivation source for cryptographic seed material.
-        PassSeeds hijacks Passkey technology to provide a phishing-resistant, biometrically-secured way to derive cryptographic keys beyond those supported by Passkeys natively.
-        With PassSeeds, you can create a regenerable, cross-deviced synced cryptographic seed that can be used to derive cryptographic keys of any type, such as Bitcoin secp256k1 keys for use as a petty cash Web wallet, BLS 12-381 keys for zero-knowledge proof interactions, and much more.
-      </p>
-      <br/>
-      <p>
-        If you are interested in learning more, check out the full-length blog post here: <a href="https://backalleycoder.com/posts/passseeds-an-experiment-in-hijacking-passkeys-to-unlock-cryptographic-use-cases">PassSeeds, on Back Alley Coder</a>
-      </p>
-      <br/>
-      <ul class="feature-list">
-        <li>Create passkeys and derive cryptographic seed material from them</li>
-        <li>PassSeeds are automatically synced across all your devices</li>
-        <li>Export your PassSeed as a 12 or 24 word BIP39 mnemonic phrase</li>
-        <li>Regenerate your PassSeed from an existing passkey on any device</li>
-        <li>Use your PassSeed across apps without exporting the private key</li>
-      </ul>
-    </div>
+    <section class="demo">
+      <wa-tab-group class="demo-tabs" active="create">
+        <wa-tab panel="create">Create</wa-tab>
+        <wa-tab panel="load">Load</wa-tab>
+        <wa-tab panel="connect">Connect Test</wa-tab>
 
-    <div class="card">
-      <h2>PassSeed.create()</h2>
-      <div class="method">
-        <p>
-          Creates a new P-256 passkey through the WebAuthn API and derives a deterministic 32-byte seed string.
-          The method extracts the public key from attestation data and hashes it with SHA-256.
-        </p>
-        <div class="info">
-          ℹ️ You'll be prompted to create a new passkey using your platform's authenticator (Face ID, Touch ID, Windows Hello, etc.)
-        </div>
-      </div>
-      <div class="form-fields">
-        <div class="form-field">
-          <label for="createUser">Username (whose seed is this?)</label>
-          <input
-            id="createUser"
-            type="text"
-            placeholder="Alice B. Carol"
-            autocomplete="username"
-          />
-        </div>
-        <div class="form-field">
-          <label for="createSeedName">Seed Name (nickname for this seed)</label>
-          <input
-            id="createSeedName"
-            type="text"
-            placeholder="My PassSeed"
-            autocomplete="off"
-          />
-        </div>
-      </div>
-      <div class="button-group">
-        <button id="createBtn" onclick="handleCreate()">Create PassSeed</button>
-      </div>
-      <div id="createStatus"></div>
-      <div id="createOutput"></div>
-    </div>
+        <wa-tab-panel name="create">
+          <wa-card class="panel-card">
+            <div class="panel-content">
+              <div class="panel-header">
+                <div>
+                  <h2>Create a Web Pass</h2>
+                  <p class="note">
+                    Give your new Web Pass a name. We'll generate the seed phrase and locator automatically.
+                  </p>
+                </div>
+              </div>
+              <div class="panel-grid">
+                <div class="web-pass-shell">
+                  <web-pass-form id="web-pass-create" class="web-pass-element"></web-pass-form>
+                </div>
+                <div class="result-card pass-output" id="create-result"></div>
+              </div>
+            </div>
+          </wa-card>
+        </wa-tab-panel>
 
-    <div class="card">
-      <h2>PassSeed.get()</h2>
-      <div class="method">
-        <p>
-          Retrieves an existing passkey and performs dual WebAuthn signatures to recover the public key.
-          The recovered public key is then hashed to derive a deterministic seed string.
-        </p>
-        <div class="warning">
-          ⚠️ This requires that you've already created a passkey using the <code>PassSeed.create()</code> method above.
-          You'll be prompted to authenticate with it twice to perform the signature-based recovery.
-        </div>
-      </div>
-      <div class="button-group">
-        <button id="getBtn" onclick="handleGet()">Retrieve PassSeed</button>
-      </div>
-      <div id="getStatus"></div>
-      <div id="getOutput"></div>
-    </div>
+        <wa-tab-panel name="load">
+          <wa-card class="panel-card">
+            <div class="panel-content">
+              <div class="panel-header">
+                <div>
+                  <h2>Load a Web Pass</h2>
+                  <p class="note">
+                    Type your Web Pass name and let your password manager fill the seed phrase.
+                  </p>
+                </div>
+              </div>
+              <div class="panel-grid">
+                <div class="web-pass-shell">
+                  <web-pass-form id="web-pass-load" class="web-pass-element" flow="load"></web-pass-form>
+                </div>
+                <div class="result-card pass-output" id="load-result"></div>
+              </div>
+            </div>
+          </wa-card>
+        </wa-tab-panel>
 
-      <div class="card">
-      <h2>PassSeed.toMnemonic()</h2>
-      <div class="method">
-        <p>
-          Converts PassSeed bytes or a seed string into a human-readable 12- or 24-word BIP39 mnemonic phrase.
-          This makes it easy to backup and share the seed material.
-        </p>
-        <div class="warning">
-          ⚠️ <strong>Demo Warning:</strong> This is a demonstration website. Do not use PassSeeds or mnemonic phrases generated here for sensitive applications. Only use this demo to understand the concept. For production use, implement PassSeeds in a secure, trusted environment.
-        </div>
-        <div class="info">
-          ℹ️ Try creating a PassSeed first, then convert it to a mnemonic phrase.
-        </div>
-      </div>
-      <div class="button-group">
-        <button id="mnemonicBtn" onclick="handleToMnemonic()" disabled>Convert to Mnemonic</button>
-      </div>
-      <div id="mnemonicStatus"></div>
-      <div id="mnemonicOutput"></div>
-    </div>
+        <wa-tab-panel name="connect">
+          <wa-card class="panel-card">
+            <div class="panel-content">
+              <div class="panel-header">
+                <div>
+                  <h2>Web Pass Connect Test</h2>
+                  <p class="note">
+                    This panel uses the app-side module to request a Web Pass signature from the wallet popup.
+                  </p>
+                </div>
+              </div>
+              <div class="panel-grid">
+                <div class="web-pass-shell">
+                  <web-pass-connect id="web-pass-connect" challenge="demo-login-challenge"
+                    popup-path="/.well-known/web-pass.html"></web-pass-connect>
+                </div>
+                <div class="result-card" id="connect-result"></div>
+              </div>
+            </div>
+          </wa-card>
+        </wa-tab-panel>
+      </wa-tab-group>
+    </section>
 
-    <footer>
-      <p>PassSeeds - A technical experiment in WebAuthn-based key management</p>
-      <p style="font-size: 0.9rem; margin-top: 1rem;">
-        Learn more: <a href="https://github.com/csuwildcat/passseeds" style="color: white;">github.com/csuwildcat/passseeds</a>
-      </p>
-    </footer>
-  </div>
-
-  <div id="secondSignatureModal" class="modal" aria-hidden="true">
-    <div class="modal-backdrop"></div>
-    <div
-      class="modal-panel"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="secondSignatureTitle"
-    >
-      <h3 id="secondSignatureTitle">Signature confirmation required</h3>
-      <p>
-        First signature capture was successful. You will now be asked for a confirmation signature to finish regeneration of your PassSeed.
-      </p>
-      <button id="secondSignatureContinue" type="button">Continue</button>
-    </div>
-  </div>
+  </main>
 
   <script type="module">
-    // Import the bundled browser build
-    import PassSeed from './dist/index.js';
+    import '/dist/wallet.js';
+    import '/dist/app.js';
 
-    // Store the current PassSeed seed string for conversion
-    let currentPassSeed = null;
+    const createElement = document.getElementById('web-pass-create');
+    const loadElement = document.getElementById('web-pass-load');
+    const createResult = document.getElementById('create-result');
+    const loadResult = document.getElementById('load-result');
+    const connectElement = document.getElementById('web-pass-connect');
+    const connectResult = document.getElementById('connect-result');
+    const storageKey = 'web-pass-demo-created';
 
-    // Helper to display output
-    function displayOutput(elementId, content, isError = false) {
-      const element = document.getElementById(elementId);
-      if (typeof content === 'object') {
-        content = JSON.stringify(content, null, 2);
+    const normalizeEntry = (entry) => {
+      if (!entry || typeof entry !== 'object') {
+        return null;
       }
-      element.className = `output ${isError ? 'error' : 'success'}`;
-      element.textContent = content;
-    }
-
-    function displayStatus(elementId, message, type = 'loading') {
-      const element = document.getElementById(elementId);
-      element.innerHTML = `<span class="status ${type}">${message}</span>`;
-    }
-
-    function showSecondSignatureModal() {
-      const modal = document.getElementById('secondSignatureModal');
-      const continueBtn = document.getElementById('secondSignatureContinue');
-      const backdrop = modal?.querySelector('.modal-backdrop');
-
-      if (!modal || !continueBtn) {
-        return Promise.resolve();
+      const locatorValue = typeof entry.locator === 'string'
+        ? entry.locator
+        : (typeof entry['email'] === 'string' ? entry['email'] : '');
+      const usernameValue = typeof entry.username === 'string'
+        ? entry.username
+        : (typeof entry.label === 'string' ? entry.label : '');
+      const seedValue = typeof entry.seed === 'string'
+        ? entry.seed
+        : (typeof entry.password === 'string' ? entry.password : '');
+      if (!seedValue) {
+        return null;
       }
+      return {
+        ...entry,
+        locator: locatorValue,
+        username: usernameValue,
+        seed: seedValue
+      };
+    };
 
-      modal.setAttribute('aria-hidden', 'false');
-      modal.classList.add('is-visible');
-
-      return new Promise((resolve) => {
-        const onKeydown = (event) => {
-          if (event.key === 'Escape') {
-            cleanup();
-          }
-        };
-
-        const cleanup = () => {
-          modal.classList.remove('is-visible');
-          modal.setAttribute('aria-hidden', 'true');
-          document.removeEventListener('keydown', onKeydown);
-          continueBtn.onclick = null;
-          if (backdrop) {
-            backdrop.onclick = null;
-          }
-          resolve();
-        };
-
-        continueBtn.onclick = cleanup;
-        if (backdrop) {
-          backdrop.onclick = cleanup;
-        }
-        document.addEventListener('keydown', onKeydown);
-      });
-    }
-
-    // Make functions available globally
-    window.handleCreate = async function() {
-      const btn = document.getElementById('createBtn');
-      btn.disabled = true;
-      const statusEl = document.getElementById('createStatus');
-      const userInput = document.getElementById('createUser');
-      const seedNameInput = document.getElementById('createSeedName');
-      
-      try {
-        displayStatus('createStatus', '⏳ Creating passkey...', 'loading');
-        
-        const user = userInput?.value.trim();
-        const seedName = seedNameInput?.value.trim();
-        const options = {};
-        if (user) {
-          options.user = user;
-        }
-        if (seedName) {
-          options.seedName = seedName;
-        }
-
-        const seedString = await PassSeed.create(options);
-        currentPassSeed = seedString;
-        
-        displayOutput('createOutput', `PassSeed (hex): ${seedString}`);
-        displayStatus('createStatus', '✓ PassSeed created successfully', 'success');
-        
-        // Enable mnemonic button
-        document.getElementById('mnemonicBtn').disabled = false;
-      } catch (error) {
-        displayOutput('createOutput', `Error: ${error.message}`, true);
-        displayStatus('createStatus', '✗ Failed to create PassSeed', 'error');
-      } finally {
-        btn.disabled = false;
+    const logEvent = (message) => {
+      if (typeof console !== 'undefined') {
+        console.info(message);
       }
     };
 
-    window.handleToMnemonic = async function() {
-      if (!currentPassSeed) {
-        displayOutput('mnemonicOutput', 'Error: Create a PassSeed first', true);
+    const escapeHtml = (value) => String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    let nyf = null;
+    try {
+      const module = await import('https://esm.sh/notyourface@1.3.0');
+      nyf = module?.default ?? null;
+    } catch (error) {
+      logEvent('notyourface failed to load, using fallback avatar.');
+    }
+
+    const readStoredPass = () => {
+      if (!window.localStorage) {
+        return null;
+      }
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) {
+          return null;
+        }
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? parsed : null;
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const writeStoredPass = (entry) => {
+      if (!window.localStorage) {
+        return;
+      }
+      try {
+        if (!entry) {
+          localStorage.removeItem(storageKey);
+          return;
+        }
+        localStorage.setItem(storageKey, JSON.stringify(entry));
+      } catch (error) {
+        // Ignore storage failures in the demo.
+      }
+    };
+
+    const getInitials = (value) => {
+      if (!value) {
+        return 'WP';
+      }
+      const parts = value.trim().split(/\s+/).filter(Boolean);
+      const initials = parts.slice(0, 2).map((part) => part[0]).join('');
+      return initials ? initials.toUpperCase() : 'WP';
+    };
+
+    const createAvatar = (seed, label) => {
+      const alt = label ? `${label} avatar` : 'Web Pass avatar';
+      if (nyf && typeof nyf.imgEl === 'function') {
+        return nyf.imgEl(
+          { seed, size: 140, complexity: 5, shapes: ['circle'] },
+          {
+            class: 'pass-avatar',
+            alt,
+            decoding: 'async',
+            loading: 'lazy'
+          }
+        );
+      }
+      const fallback = document.createElement('div');
+      fallback.className = 'pass-avatar pass-avatar-fallback';
+      fallback.textContent = getInitials(label || '');
+      fallback.setAttribute('role', 'img');
+      fallback.setAttribute('aria-label', alt);
+      return fallback;
+    };
+
+    const setCardFlipped = (card, isFlipped) => {
+      if (!card) {
+        return;
+      }
+      card.classList.toggle('is-flipped', isFlipped);
+    };
+
+    const passResultTemplate = (entry, title, emptyMessage) => {
+      const safeTitle = escapeHtml(title || '');
+      if (!entry) {
+        const safeEmptyMessage = escapeHtml(emptyMessage || 'No Web Pass available yet.');
+        return `
+            <div class="result-header">
+              <p class="result-title">${safeTitle}</p>
+            </div>
+            <p class="note">${safeEmptyMessage}</p>
+          `;
+      }
+
+      const passName = entry.username || 'Web Pass';
+      const locatorValue = entry.locator || '';
+      const safePassName = escapeHtml(passName);
+      const safeLocatorValue = escapeHtml(locatorValue);
+      const safeSeed = escapeHtml(entry.seed || '');
+      const safeSeedWords = typeof entry.seed === 'string'
+        ? entry.seed
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean)
+            .map((word) => `<span class="pass-seed-word">${escapeHtml(word)}</span>`)
+            .join('')
+        : '';
+      const locatorText = locatorValue ? safeLocatorValue : 'Locator unavailable';
+      const qrMarkup = locatorValue
+        ? `<wa-qr-code value="${escapeHtml(locatorValue)}"></wa-qr-code>`
+        : '<div class="pass-qr-placeholder">QR unavailable</div>';
+      const locatorDisabled = locatorValue ? '' : ' disabled';
+
+      return `
+          <div class="result-header">
+            <p class="result-title">${safeTitle}</p>
+          </div>
+          <p class="note">Flip the card to reveal the seed phrase stored on the back.</p>
+          <div class="pass-card" data-role="pass-card">
+            <div class="pass-card-inner">
+              <div class="pass-card-face pass-card-front">
+                <div class="pass-card-bar pass-card-top-bar">
+                  <div class="pass-card-brand">
+                    <img class="pass-card-logo" src="logo.svg" alt="" aria-hidden="true">
+                    <span>Web Pass</span>
+                  </div>
+                </div>
+                <div class="pass-card-center">
+                  <div class="pass-avatar-slot" data-role="avatar"></div>
+                  <p class="pass-name">${safePassName}</p>
+                </div>
+                <div class="pass-card-bar pass-card-bottom-bar">
+                  <div class="pass-locator-row">
+                    <span class="pass-locator">${locatorText}</span>
+                    <wa-copy-button
+                      value="${escapeHtml(locatorValue)}"
+                      copy-label="Copy locator"
+                      success-label="Locator copied"
+                      error-label="Copy failed"
+                      class="pass-locator-copy"
+                      data-role="copy-locator"${locatorDisabled}
+                    ></wa-copy-button>
+                  </div>
+                  <div class="pass-actions">
+                    <wa-button
+                      type="button"
+                      appearance="outlined"
+                      variant="brand"
+                      size="small"
+                      data-role="reveal"
+                    >
+                      Reveal seed
+                    </wa-button>
+                  </div>
+                </div>
+              </div>
+              <div class="pass-card-face pass-card-back">
+                <div class="pass-card-header">
+                  <div class="pass-card-title-group">
+                    <wa-button
+                      type="button"
+                      appearance="outlined"
+                      variant="neutral"
+                      size="small"
+                      class="pass-hide-button"
+                      data-role="hide"
+                      aria-label="Hide seed"
+                      title="Hide seed"
+                    >
+                      <wa-icon name="arrow-left" aria-hidden="true"></wa-icon>
+                    </wa-button>
+                    <span class="pass-card-title">Seed phrase</span>
+                  </div>
+                  <div class="pass-actions">
+                    <wa-copy-button
+                      value="${escapeHtml(entry.seed)}"
+                      copy-label="Copy seed"
+                      success-label="Seed copied"
+                      error-label="Copy failed"
+                      data-role="copy-seed"
+                    ></wa-copy-button>
+                  </div>
+                </div>
+                <code class="pass-seed" aria-label="${safeSeed}">${safeSeedWords}</code>
+                <p class="pass-hint">Anyone with this seed can derive your pass credentials.</p>
+              </div>
+            </div>
+          </div>
+        `;
+    };
+
+    const renderPassResult = (container, entry, title, emptyMessage) => {
+      if (!container) {
+        return;
+      }
+      container.innerHTML = passResultTemplate(entry, title, emptyMessage);
+      container.classList.remove('is-hidden');
+
+      if (!entry) {
         return;
       }
 
-      const btn = document.getElementById('mnemonicBtn');
-      btn.disabled = true;
+      const passName = entry.username || 'Web Pass';
+      const card = container.querySelector('[data-role="pass-card"]');
+      const avatarSlot = container.querySelector('[data-role="avatar"]');
+      if (avatarSlot) {
+        const avatar = createAvatar(entry.seed, passName);
+        avatarSlot.replaceWith(avatar);
+      }
 
-      try {
-        displayStatus('mnemonicStatus', '⏳ Generating mnemonic...', 'loading');
-        
-        const mnemonic = await PassSeed.toMnemonic(currentPassSeed, 12);
-        const words = mnemonic.split(' ');
-        
-        let html = `<div class="mnemonic-display">`;
-        words.forEach((word, index) => {
-          html += `<div class="word">${index + 1}. ${word}</div>`;
-        });
-        html += `</div>`;
-        html += `<p><strong>Full mnemonic:</strong></p><div class="output success">${mnemonic}</div>`;
-        
-        document.getElementById('mnemonicOutput').innerHTML = html;
-        displayStatus('mnemonicStatus', '✓ Mnemonic generated successfully', 'success');
-      } catch (error) {
-        displayOutput('mnemonicOutput', `Error: ${error.message}`, true);
-        displayStatus('mnemonicStatus', '✗ Failed to generate mnemonic', 'error');
-      } finally {
-        btn.disabled = false;
+      const revealButton = container.querySelector('[data-role="reveal"]');
+      if (revealButton) {
+        revealButton.addEventListener('click', () => setCardFlipped(card, true));
+      }
+      const hideButton = container.querySelector('[data-role="hide"]');
+      if (hideButton) {
+        hideButton.addEventListener('click', () => setCardFlipped(card, false));
+      }
+      const seedCopy = container.querySelector('[data-role="copy-seed"]');
+      if (seedCopy) {
+        seedCopy.addEventListener('wa-copy', () => logEvent('Seed copied to clipboard.'));
+        seedCopy.addEventListener('wa-error', () => logEvent('Failed to copy Seed.'));
+      }
+      const locatorCopy = container.querySelector('[data-role="copy-locator"]');
+      if (locatorCopy && entry.locator) {
+        locatorCopy.addEventListener('wa-copy', () => logEvent('Locator copied to clipboard.'));
+        locatorCopy.addEventListener('wa-error', () => logEvent('Failed to copy Locator.'));
       }
     };
 
-    window.handleGet = async function() {
-      const btn = document.getElementById('getBtn');
-      btn.disabled = true;
-
-      try {
-        displayStatus('getStatus', '⏳ Retrieving and signing with passkey (1/2)...', 'loading');
-        
-        const seedString = await PassSeed.get({
-          onBeforeSecondSignature: async () => {
-            displayStatus('getStatus', '⏳ First signature complete. Ready for signature (2/2)...', 'loading');
-            await showSecondSignatureModal();
-          }
-        });
-        currentPassSeed = seedString;
-        
-        displayOutput('getOutput', `PassSeed (hex): ${seedString}`);
-        displayStatus('getStatus', '✓ PassSeed retrieved successfully', 'success');
-        
-        // Enable mnemonic button
-        document.getElementById('mnemonicBtn').disabled = false;
-      } catch (error) {
-        displayOutput('getOutput', `Error: ${error.message}`, true);
-        displayStatus('getStatus', '✗ Failed to retrieve PassSeed', 'error');
-      } finally {
-        btn.disabled = false;
+    const renderConnectResult = (container, response, title, emptyMessage) => {
+      if (!container) {
+        return;
       }
+      container.innerHTML = '';
+      container.classList.remove('is-hidden');
+
+      const header = document.createElement('div');
+      header.className = 'result-header';
+      const headerTitle = document.createElement('p');
+      headerTitle.className = 'result-title';
+      headerTitle.textContent = title;
+      header.appendChild(headerTitle);
+      container.appendChild(header);
+
+      if (!response) {
+        const empty = document.createElement('p');
+        empty.className = 'note';
+        empty.textContent = emptyMessage || 'No connect response yet.';
+        container.appendChild(empty);
+        return;
+      }
+
+      const status = document.createElement('p');
+      status.className = 'note';
+      status.textContent = `Connect result: ${response.result || 'unknown'}.`;
+      container.appendChild(status);
+
+      const addRow = (label, value) => {
+        if (!value) {
+          return;
+        }
+        const row = document.createElement('div');
+        row.className = 'result-row';
+        const rowLabel = document.createElement('span');
+        rowLabel.textContent = label;
+        const rowValue = document.createElement('code');
+        rowValue.textContent = value;
+        row.append(rowLabel, rowValue);
+        container.appendChild(row);
+      };
+
+      addRow('Locator', response.locator);
+      addRow('Public key', response.publicKey);
+      addRow('Signature', response.signature);
+      addRow('Auth JWT', response.authJwt || response.authzJwt);
+      if (response.locator && connectElement?.authStore?.get) {
+        const storedToken = connectElement.authStore.get(response.locator);
+        addRow('Stored JWT', storedToken);
+      }
+      addRow('Error', response.error);
     };
 
+    createElement?.addEventListener('webpass:create', (event) => {
+      const entry = normalizeEntry(event.detail);
+      if (!entry) {
+        return;
+      }
+      writeStoredPass({ ...entry, createdOnLoad: true });
+      renderPassResult(createResult, entry, 'Created Web Pass', 'No Web Pass created yet.');
+      logEvent('Generated Web Pass seed phrase.');
+    });
+
+    createElement?.addEventListener('webpass:error', (event) => {
+      const message = event.detail?.message || 'Failed to generate Web Pass.';
+      logEvent(message);
+    });
+
+    loadElement?.addEventListener('webpass:load', (event) => {
+      const entry = normalizeEntry(event.detail);
+      if (!entry) {
+        return;
+      }
+      renderPassResult(loadResult, entry, 'Loaded Web Pass', 'No Web Pass loaded yet.');
+      logEvent('Loaded Web Pass seed phrase.');
+    });
+
+    connectElement?.addEventListener('webpass:connect-response', (event) => {
+      const response = event.detail;
+      if (!response || typeof response !== 'object') {
+        return;
+      }
+      renderConnectResult(connectResult, response, 'Connect Response', 'No connect response yet.');
+      logEvent(`Connect response: ${response.result || 'unknown'}.`);
+    });
+
+    connectElement?.addEventListener('webpass:connect-error', (event) => {
+      const message = event.detail?.message || event.detail?.error || 'Connect failed.';
+      renderConnectResult(connectResult, { result: 'error', error: message }, 'Connect Response', 'No connect response yet.');
+      logEvent(message);
+    });
+
+    await customElements.whenDefined('web-pass-form');
+    if (typeof createElement?.refreshFromAttributes === 'function') {
+      createElement.refreshFromAttributes();
+    }
+    if (typeof loadElement?.refreshFromAttributes === 'function') {
+      loadElement.refreshFromAttributes();
+    }
+    await customElements.whenDefined('web-pass-connect');
+    if (typeof connectElement?.refreshFromAttributes === 'function') {
+      connectElement.refreshFromAttributes();
+    }
+
+    const storedPass = readStoredPass();
+    if (storedPass && storedPass.createdOnLoad) {
+      const entry = normalizeEntry(storedPass);
+      if (entry) {
+        renderPassResult(createResult, entry, 'Created Web Pass', 'No Web Pass created yet.');
+      }
+      const nextPass = { ...storedPass };
+      delete nextPass.createdOnLoad;
+      writeStoredPass(nextPass);
+    } else if (storedPass) {
+      writeStoredPass(null);
+    }
+
+    const createForm = createElement?.form ?? createElement?.querySelector('form');
+    if (createForm) {
+      createForm.addEventListener('submit', () => {
+        logEvent('Form submitted to trigger a password manager save prompt.');
+      });
+    }
+
+    if (!storedPass || !storedPass.createdOnLoad) {
+      renderPassResult(createResult, null, 'Created Web Pass', 'No Web Pass created yet.');
+    }
+    renderPassResult(loadResult, null, 'Loaded Web Pass', 'No Web Pass loaded yet.');
+    renderConnectResult(connectResult, null, 'Connect Response', 'No connect response yet.');
+    logEvent('Demo ready. Create or load a Web Pass to begin.');
   </script>
 </body>
+
 </html>

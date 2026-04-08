@@ -1,24 +1,39 @@
 {
-  "name": "passseeds",
-  "version": "0.3.0",
-  "description": "PassSeeds - Passkey-based cryptographic seed derivation",
+  "name": "web-pass",
+  "version": "0.1.0",
+  "description": "Web Pass - experimental web credential tooling (placeholder)",
   "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./wallet": {
+      "import": "./dist/wallet.js",
+      "types": "./dist/wallet.d.ts"
+    },
+    "./app": {
+      "import": "./dist/app.js",
+      "types": "./dist/app.d.ts"
     }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
+    "dist/app.js",
+    "dist/app.d.ts",
     "dist/index.js",
-    "dist/index.d.ts"
+    "dist/index.d.ts",
+    "dist/utils.js",
+    "dist/utils.d.ts",
+    "dist/wallet.js",
+    "dist/wallet.d.ts",
+    "dist/declarations.d.ts"
   ],
   "scripts": {
     "build": "npm run build:tsc && npm run build:browser",
     "build:tsc": "tsc",
-    "build:browser": "esbuild src/index.ts --bundle --format=esm --platform=browser --target=es2020 --outfile=dist/index.js --inject:./scripts/buffer-shim.js",
+    "build:browser": "esbuild src/index.ts src/wallet.ts src/app.ts --bundle --format=esm --platform=browser --target=es2020 --outdir=dist --entry-names=[name] --inject:./scripts/buffer-shim.js",
     "dev": "node scripts/dev.js",
     "dev:demo": "node scripts/dev.js --demo",
     "test": "node --test dist/tests/**/*.test.js",
@@ -26,22 +41,21 @@
     "demo": "node scripts/serve-demo.js"
   },
   "keywords": [
-    "passkeys",
-    "webauthn",
-    "cryptography",
-    "seed",
-    "key-derivation",
-    "ecdsa"
+    "web-pass",
+    "credentials",
+    "authentication",
+    "security",
+    "web"
   ],
   "author": "Daniel Buchner",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/csuwildcat/passseeds.git"
+    "url": "git+https://github.com/csuwildcat/web-pass.git"
   },
-  "homepage": "https://backalleycoder.com/passseeds/",
+  "homepage": "https://backalleycoder.com/web-pass/",
   "bugs": {
-    "url": "https://github.com/csuwildcat/passseeds/issues"
+    "url": "https://github.com/csuwildcat/web-pass/issues"
   },
   "engines": {
     "node": ">=20.19.0"
