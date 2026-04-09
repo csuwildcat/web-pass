@@ -231,7 +231,7 @@ export class WebPassConnectElement extends HTMLElementBase {
         }
       </style>
       <form class="form web-pass-form" autocomplete="on" novalidate method="post">
-        <div class="web-pass-connect-row">
+        <div class="web-pass-connect-row web-pass-inline-row">
           <label class="web-pass-field">
             Web Pass locator
             <input data-role="locator" type="email" name="email" autocomplete="email" placeholder="pass@origin">

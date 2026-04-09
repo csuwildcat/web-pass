@@ -34,6 +34,7 @@
     "build": "npm run build:tsc && npm run build:browser",
     "build:tsc": "tsc",
     "build:browser": "esbuild src/index.ts src/wallet.ts src/app.ts --bundle --format=esm --platform=browser --target=es2020 --outdir=dist --entry-names=[name] --inject:./scripts/buffer-shim.js",
+    "build:demo": "vite build --config vite.demo.config.js",
     "dev": "tsc --watch",
     "dev:demo": "vite --config vite.demo.config.js",
     "typecheck": "tsc --noEmit",

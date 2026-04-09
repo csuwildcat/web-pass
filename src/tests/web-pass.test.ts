@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { formatLocator, generateSeed } from '../wallet.js';
+import { normalizePopupPath } from '../utils.js';
 
 test('formatLocator builds the expected locator', () => {
   const locator = formatLocator();
@@ -34,4 +35,10 @@ test('generateSeed rejects unsupported entropy sizes', () => {
 
 test('generateSeed rejects non-bip39 encodings', () => {
   assert.throws(() => generateSeed({ encoding: 'base64url' as unknown as any }));
+});
+
+test('normalizePopupPath preserves explicit relative popup paths', () => {
+  assert.equal(normalizePopupPath('./.well-known/web-pass.html'), './.well-known/web-pass.html');
+  assert.equal(normalizePopupPath('.well-known/web-pass.html'), '.well-known/web-pass.html');
+  assert.equal(normalizePopupPath('/.well-known/web-pass.html'), '/.well-known/web-pass.html');
 });

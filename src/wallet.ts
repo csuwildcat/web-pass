@@ -425,14 +425,16 @@ export class WebPassFormElement extends HTMLElementBase {
   private renderCreateForm(): void {
     this.innerHTML = `
       <form class="form web-pass-form" autocomplete="off" novalidate method="post">
-        <label class="web-pass-field">
-          Web Pass name
-          <input data-role="username" type="text" name="webpass-name" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Name your Web Pass">
-          <input data-role="seed" type="password" name="password" autocomplete="new-password" placeholder="Generated seed phrase appears here" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;">
-          <input data-role="locator" type="email" name="email" autocomplete="email" placeholder="pass@origin" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;">
-        </label>
-        <div class="buttons web-pass-actions">
-          <button data-role="submit" type="submit" class="primary">Save Web Pass</button>
+        <div class="web-pass-inline-row">
+          <label class="web-pass-field">
+            Web Pass name
+            <input data-role="username" type="text" name="webpass-name" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Name your pass">
+            <input data-role="seed" type="password" name="password" autocomplete="new-password" placeholder="Generated seed phrase appears here" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;">
+            <input data-role="locator" type="email" name="email" autocomplete="email" placeholder="pass@origin" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;">
+          </label>
+          <div class="buttons web-pass-actions">
+            <button data-role="submit" type="submit" class="primary">Create Pass</button>
+          </div>
         </div>
       </form>
     `;

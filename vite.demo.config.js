@@ -3,6 +3,8 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 
 const rootDir = fileURLToPath(new URL('.', import.meta.url));
+const demoDir = path.resolve(rootDir, 'demo');
+const siteDir = path.resolve(rootDir, 'site');
 
 function demoPostRedirect() {
   return {
@@ -32,8 +34,9 @@ function demoPostRedirect() {
   };
 }
 
-export default defineConfig({
-  root: path.resolve(rootDir, 'demo'),
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? './' : '/',
+  root: demoDir,
   plugins: [demoPostRedirect()],
   server: {
     port: 5330,
@@ -45,5 +48,16 @@ export default defineConfig({
   preview: {
     port: 5330,
     strictPort: true
+  },
+  build: {
+    target: 'es2022',
+    outDir: siteDir,
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: path.resolve(demoDir, 'index.html'),
+        connect: path.resolve(demoDir, '.well-known/web-pass.html')
+      }
+    }
   }
-});
+}));

@@ -104,5 +104,6 @@ export function normalizePopupPath(path: string | undefined): string {
   if (!path) {
     return DEFAULT_POPUP_PATH;
   }
-  return path.startsWith('/') ? path : `/${path}`;
+  const trimmed = path.trim();
+  return trimmed || DEFAULT_POPUP_PATH;
 }
