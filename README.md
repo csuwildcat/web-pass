@@ -48,15 +48,16 @@ new direction is finalized.
 
 ```bash
 npm run build      # Compile TypeScript + browser bundle
-npm run dev        # Watch mode compilation
-npm run dev:demo   # Watch mode + live demo reload
+npm run dev        # Watch package output to dist/
+npm run dev:demo   # Vite demo server with HMR
+npm run typecheck  # Check TypeScript without emitting files
 npm test           # Run tests
-npm run demo       # Start interactive demo shell
+npm run demo       # Start the Vite demo
 ```
 
 Build outputs to `dist/index.js`, `dist/wallet.js`, and `dist/app.js` with
-matching `.d.ts` files. The demo server runs at `http://localhost:8080` and
-reloads on changes.
+matching `.d.ts` files. The demo server runs at `http://localhost:5330` and
+loads source modules through Vite with HMR.
 
 ### Publishing (maintainers)
 
@@ -79,14 +80,15 @@ web-pass/
 │   ├── index.ts          # Aggregated entry point
 │   └── tests/
 │       └── web-pass.test.ts
-├── dist/                  # Compiled output
+├── dist/                 # Compiled output
 ├── demo/
-│   └── index.html        # Demo shell
+│   ├── index.html        # Demo shell
+│   └── main.js           # Demo bootstrap
 ├── scripts/
-│   ├── serve-demo.js     # Demo server with live reload
-│   └── dev.js            # Dev runner (tsc watch + optional demo)
+│   └── buffer-shim.js    # Browser Buffer shim for package bundles
 ├── package.json
 ├── tsconfig.json
+├── vite.demo.config.js
 └── [documentation files]
 ```
 

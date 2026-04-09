@@ -15,6 +15,7 @@
       font-family: var(--wa-font-family-sans, "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif);
       --wa-font-family-sans: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
       --wa-font-family-mono: "DM Mono", "SFMono-Regular", "Courier New", monospace;
+      --panel-body-space: 1.5rem;
       --demo-bg: #0a0f1a;
       --demo-panel: rgba(15, 19, 30, 0.88);
       --demo-border: rgba(148, 163, 184, 0.18);
@@ -108,20 +109,26 @@
 
     .panel-card {
       display: block;
-      padding-bottom: 1rem;
+    }
+
+    .panel-card::part(body) {
+      padding: var(--panel-body-space);
     }
 
     .panel-content {
       display: grid;
-      gap: 1.5rem;
+      gap: var(--panel-body-space);
     }
 
     .panel-header {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.75rem;
+      display: block;
+    }
+
+    .panel-header > * {
+      width: 100%;
+      margin-bottom: 0.2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid color-mix(in oklab, var(--wa-color-surface-border), transparent 18%);
     }
 
     .note {
@@ -132,30 +139,50 @@
 
     .panel-grid {
       display: grid;
-      gap: 1.5rem;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--panel-body-space);
+      width: 100%;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
       align-items: start;
     }
 
-    .web-pass-shell {
-      background: color-mix(in oklab, var(--wa-color-surface-raised), transparent 12%);
-      border-radius: 18px;
-      padding: 1.25rem;
-      border: 1px solid color-mix(in oklab, var(--wa-color-surface-border), transparent 20%);
-      box-shadow: 0 16px 32px rgba(4, 8, 20, 0.45);
+    .panel-grid.panel-grid-connect {
+      grid-template-columns: minmax(0, 0.85fr) minmax(380px, 1.15fr);
+    }
+
+    .panel-grid > * {
+      width: 100%;
+    }
+
+    .panel-grid > :first-child {
+      justify-self: start;
+      align-self: start;
+    }
+
+    .panel-grid > :last-child {
+      justify-self: end;
+      align-self: start;
+    }
+
+    .web-pass-element,
+    web-pass-connect {
+      display: block;
+      padding: 0;
       color: var(--wa-color-text-normal);
     }
 
-    web-pass-form {
+    web-pass-form,
+    web-pass-connect {
       display: block;
     }
 
-    .web-pass-shell .form {
+    .web-pass-element .form,
+    web-pass-connect .form {
       display: grid;
       gap: 1rem;
     }
 
-    .web-pass-shell label {
+    .web-pass-element label,
+    web-pass-connect label {
       display: grid;
       gap: 0.45rem;
       font-weight: var(--wa-form-control-label-font-weight);
@@ -163,7 +190,8 @@
       color: var(--wa-form-control-label-color);
     }
 
-    .web-pass-shell input {
+    .web-pass-element input,
+    web-pass-connect input {
       font: inherit;
       width: 100%;
       height: var(--wa-form-control-height);
@@ -184,34 +212,41 @@
       transition-timing-function: var(--wa-transition-easing);
     }
 
-    .web-pass-shell input:focus {
+    .web-pass-element input:focus,
+    web-pass-connect input:focus {
       outline: none;
     }
 
-    .web-pass-shell input:focus-visible {
+    .web-pass-element input:focus-visible,
+    web-pass-connect input:focus-visible {
       outline: var(--wa-focus-ring);
       outline-offset: var(--wa-focus-ring-offset);
     }
 
-    .web-pass-shell input::placeholder {
+    .web-pass-element input::placeholder,
+    web-pass-connect input::placeholder {
       color: var(--wa-form-control-placeholder-color);
     }
 
-    .web-pass-shell input[readonly] {
+    .web-pass-element input[readonly],
+    web-pass-connect input[readonly] {
       background-color: color-mix(in oklab, var(--wa-form-control-background-color), black 8%);
       color: var(--wa-color-text-quiet);
       border-color: color-mix(in oklab, var(--wa-form-control-border-color), transparent 35%);
       cursor: not-allowed;
     }
 
-    .web-pass-shell .buttons,
-    .web-pass-shell .web-pass-actions {
+    .web-pass-element .buttons,
+    .web-pass-element .web-pass-actions,
+    web-pass-connect .buttons,
+    web-pass-connect .web-pass-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 0.6rem;
     }
 
-    .web-pass-shell button {
+    .web-pass-element button,
+    web-pass-connect button {
       font: inherit;
       height: var(--wa-form-control-height);
       padding: 0 var(--wa-form-control-padding-inline);
@@ -230,58 +265,70 @@
       transition-timing-function: var(--wa-transition-easing);
     }
 
-    .web-pass-shell button:focus {
+    .web-pass-element button:focus,
+    web-pass-connect button:focus {
       outline: none;
     }
 
-    .web-pass-shell button:focus-visible {
+    .web-pass-element button:focus-visible,
+    web-pass-connect button:focus-visible {
       outline: var(--wa-focus-ring);
       outline-offset: var(--wa-focus-ring-offset);
     }
 
-    .web-pass-shell button.primary {
+    .web-pass-element button.primary,
+    web-pass-connect button.primary {
       background-color: var(--wa-color-brand-fill-loud);
       color: var(--wa-color-brand-on-loud);
       border-color: transparent;
     }
 
-    .web-pass-shell button.secondary {
+    .web-pass-element button.secondary,
+    web-pass-connect button.secondary {
       background-color: transparent;
       color: var(--wa-color-neutral-on-quiet);
       border-color: var(--wa-color-neutral-border-loud);
     }
 
-    .web-pass-shell button.ghost {
+    .web-pass-element button.ghost,
+    web-pass-connect button.ghost {
       background: transparent;
       color: var(--wa-color-neutral-on-quiet);
       border-color: transparent;
     }
 
-    .web-pass-shell button:not(:disabled):hover {
+    .web-pass-element button:not(:disabled):hover,
+    web-pass-connect button:not(:disabled):hover {
       background-color: color-mix(in oklab,
           currentColor,
           transparent 94%);
     }
 
-    .web-pass-shell button.primary:not(:disabled):hover {
+    .web-pass-element button.primary:not(:disabled):hover,
+    web-pass-connect button.primary:not(:disabled):hover {
       background-color: color-mix(in oklab,
           var(--wa-color-brand-fill-loud),
           var(--wa-color-mix-hover));
     }
 
-    .web-pass-shell button.primary:not(:disabled):active {
+    .web-pass-element button.primary:not(:disabled):active,
+    web-pass-connect button.primary:not(:disabled):active {
       background-color: color-mix(in oklab,
           var(--wa-color-brand-fill-loud),
           var(--wa-color-mix-active));
     }
 
-    .web-pass-shell button.secondary:not(:disabled):hover,
-    .web-pass-shell button.ghost:not(:disabled):hover {
+    .web-pass-element button.secondary:not(:disabled):hover,
+    .web-pass-element button.ghost:not(:disabled):hover,
+    web-pass-connect button.secondary:not(:disabled):hover,
+    web-pass-connect button.ghost:not(:disabled):hover {
       background-color: var(--wa-color-neutral-fill-quiet);
     }
 
-    .web-pass-shell button.secondary:not(:disabled):active,
-    .web-pass-shell button.ghost:not(:disabled):active {
+    .web-pass-element button.secondary:not(:disabled):active,
+    .web-pass-element button.ghost:not(:disabled):active,
+    web-pass-connect button.secondary:not(:disabled):active,
+    web-pass-connect button.ghost:not(:disabled):active {
       background-color: color-mix(in oklab,
           var(--wa-color-neutral-fill-quiet),
           var(--wa-color-mix-active));
@@ -306,6 +353,9 @@
       box-shadow: none;
       padding: 0;
       min-height: 0;
+      display: grid;
+      justify-items: center;
+      align-content: start;
     }
 
     .pass-card {
@@ -315,6 +365,19 @@
       margin: 0 auto;
       padding-top: 1.4rem;
       perspective: 1200px;
+    }
+
+    .pass-placeholder {
+      --pass-card-height: 230px;
+      width: min(420px, 100%);
+      min-height: var(--pass-card-height);
+      margin: 1.4rem auto 0;
+      border-radius: 20px;
+      border: 2px dashed rgba(148, 163, 184, 0.42);
+      background:
+        linear-gradient(145deg, rgba(15, 23, 42, 0.18), rgba(8, 12, 24, 0.3)),
+        radial-gradient(circle at top right, rgba(94, 234, 212, 0.08), transparent 50%);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
     }
 
     .pass-card-inner {
@@ -678,8 +741,27 @@
       }
     }
 
+    @media (max-width: 980px) {
+      .panel-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .panel-grid.panel-grid-connect {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .panel-grid > :first-child,
+      .panel-grid > :last-child {
+        justify-self: stretch;
+      }
+    }
+
     @media (max-width: 640px) {
       .pass-card {
+        --pass-card-height: 300px;
+      }
+
+      .pass-placeholder {
         --pass-card-height: 300px;
       }
 
@@ -765,9 +847,7 @@
                 </div>
               </div>
               <div class="panel-grid">
-                <div class="web-pass-shell">
-                  <web-pass-form id="web-pass-create" class="web-pass-element"></web-pass-form>
-                </div>
+                <web-pass-form id="web-pass-create" class="web-pass-element"></web-pass-form>
                 <div class="result-card pass-output" id="create-result"></div>
               </div>
             </div>
@@ -786,9 +866,7 @@
                 </div>
               </div>
               <div class="panel-grid">
-                <div class="web-pass-shell">
-                  <web-pass-form id="web-pass-load" class="web-pass-element" flow="load"></web-pass-form>
-                </div>
+                <web-pass-form id="web-pass-load" class="web-pass-element" flow="load"></web-pass-form>
                 <div class="result-card pass-output" id="load-result"></div>
               </div>
             </div>
@@ -806,11 +884,9 @@
                   </p>
                 </div>
               </div>
-              <div class="panel-grid">
-                <div class="web-pass-shell">
-                  <web-pass-connect id="web-pass-connect" challenge="demo-login-challenge"
-                    popup-path="/.well-known/web-pass.html"></web-pass-connect>
-                </div>
+              <div class="panel-grid panel-grid-connect">
+                <web-pass-connect id="web-pass-connect" challenge="demo-login-challenge"
+                  popup-path="/.well-known/web-pass.html"></web-pass-connect>
                 <div class="result-card" id="connect-result"></div>
               </div>
             </div>
@@ -821,410 +897,7 @@
 
   </main>
 
-  <script type="module">
-    import '/dist/wallet.js';
-    import '/dist/app.js';
-
-    const createElement = document.getElementById('web-pass-create');
-    const loadElement = document.getElementById('web-pass-load');
-    const createResult = document.getElementById('create-result');
-    const loadResult = document.getElementById('load-result');
-    const connectElement = document.getElementById('web-pass-connect');
-    const connectResult = document.getElementById('connect-result');
-    const storageKey = 'web-pass-demo-created';
-
-    const normalizeEntry = (entry) => {
-      if (!entry || typeof entry !== 'object') {
-        return null;
-      }
-      const locatorValue = typeof entry.locator === 'string'
-        ? entry.locator
-        : (typeof entry['email'] === 'string' ? entry['email'] : '');
-      const usernameValue = typeof entry.username === 'string'
-        ? entry.username
-        : (typeof entry.label === 'string' ? entry.label : '');
-      const seedValue = typeof entry.seed === 'string'
-        ? entry.seed
-        : (typeof entry.password === 'string' ? entry.password : '');
-      if (!seedValue) {
-        return null;
-      }
-      return {
-        ...entry,
-        locator: locatorValue,
-        username: usernameValue,
-        seed: seedValue
-      };
-    };
-
-    const logEvent = (message) => {
-      if (typeof console !== 'undefined') {
-        console.info(message);
-      }
-    };
-
-    const escapeHtml = (value) => String(value ?? '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-    let nyf = null;
-    try {
-      const module = await import('https://esm.sh/notyourface@1.3.0');
-      nyf = module?.default ?? null;
-    } catch (error) {
-      logEvent('notyourface failed to load, using fallback avatar.');
-    }
-
-    const readStoredPass = () => {
-      if (!window.localStorage) {
-        return null;
-      }
-      try {
-        const raw = localStorage.getItem(storageKey);
-        if (!raw) {
-          return null;
-        }
-        const parsed = JSON.parse(raw);
-        return parsed && typeof parsed === 'object' ? parsed : null;
-      } catch (error) {
-        return null;
-      }
-    };
-
-    const writeStoredPass = (entry) => {
-      if (!window.localStorage) {
-        return;
-      }
-      try {
-        if (!entry) {
-          localStorage.removeItem(storageKey);
-          return;
-        }
-        localStorage.setItem(storageKey, JSON.stringify(entry));
-      } catch (error) {
-        // Ignore storage failures in the demo.
-      }
-    };
-
-    const getInitials = (value) => {
-      if (!value) {
-        return 'WP';
-      }
-      const parts = value.trim().split(/\s+/).filter(Boolean);
-      const initials = parts.slice(0, 2).map((part) => part[0]).join('');
-      return initials ? initials.toUpperCase() : 'WP';
-    };
-
-    const createAvatar = (seed, label) => {
-      const alt = label ? `${label} avatar` : 'Web Pass avatar';
-      if (nyf && typeof nyf.imgEl === 'function') {
-        return nyf.imgEl(
-          { seed, size: 140, complexity: 5, shapes: ['circle'] },
-          {
-            class: 'pass-avatar',
-            alt,
-            decoding: 'async',
-            loading: 'lazy'
-          }
-        );
-      }
-      const fallback = document.createElement('div');
-      fallback.className = 'pass-avatar pass-avatar-fallback';
-      fallback.textContent = getInitials(label || '');
-      fallback.setAttribute('role', 'img');
-      fallback.setAttribute('aria-label', alt);
-      return fallback;
-    };
-
-    const setCardFlipped = (card, isFlipped) => {
-      if (!card) {
-        return;
-      }
-      card.classList.toggle('is-flipped', isFlipped);
-    };
-
-    const passResultTemplate = (entry, title, emptyMessage) => {
-      const safeTitle = escapeHtml(title || '');
-      if (!entry) {
-        const safeEmptyMessage = escapeHtml(emptyMessage || 'No Web Pass available yet.');
-        return `
-            <div class="result-header">
-              <p class="result-title">${safeTitle}</p>
-            </div>
-            <p class="note">${safeEmptyMessage}</p>
-          `;
-      }
-
-      const passName = entry.username || 'Web Pass';
-      const locatorValue = entry.locator || '';
-      const safePassName = escapeHtml(passName);
-      const safeLocatorValue = escapeHtml(locatorValue);
-      const safeSeed = escapeHtml(entry.seed || '');
-      const safeSeedWords = typeof entry.seed === 'string'
-        ? entry.seed
-            .trim()
-            .split(/\s+/)
-            .filter(Boolean)
-            .map((word) => `<span class="pass-seed-word">${escapeHtml(word)}</span>`)
-            .join('')
-        : '';
-      const locatorText = locatorValue ? safeLocatorValue : 'Locator unavailable';
-      const qrMarkup = locatorValue
-        ? `<wa-qr-code value="${escapeHtml(locatorValue)}"></wa-qr-code>`
-        : '<div class="pass-qr-placeholder">QR unavailable</div>';
-      const locatorDisabled = locatorValue ? '' : ' disabled';
-
-      return `
-          <div class="result-header">
-            <p class="result-title">${safeTitle}</p>
-          </div>
-          <p class="note">Flip the card to reveal the seed phrase stored on the back.</p>
-          <div class="pass-card" data-role="pass-card">
-            <div class="pass-card-inner">
-              <div class="pass-card-face pass-card-front">
-                <div class="pass-card-bar pass-card-top-bar">
-                  <div class="pass-card-brand">
-                    <img class="pass-card-logo" src="logo.svg" alt="" aria-hidden="true">
-                    <span>Web Pass</span>
-                  </div>
-                </div>
-                <div class="pass-card-center">
-                  <div class="pass-avatar-slot" data-role="avatar"></div>
-                  <p class="pass-name">${safePassName}</p>
-                </div>
-                <div class="pass-card-bar pass-card-bottom-bar">
-                  <div class="pass-locator-row">
-                    <span class="pass-locator">${locatorText}</span>
-                    <wa-copy-button
-                      value="${escapeHtml(locatorValue)}"
-                      copy-label="Copy locator"
-                      success-label="Locator copied"
-                      error-label="Copy failed"
-                      class="pass-locator-copy"
-                      data-role="copy-locator"${locatorDisabled}
-                    ></wa-copy-button>
-                  </div>
-                  <div class="pass-actions">
-                    <wa-button
-                      type="button"
-                      appearance="outlined"
-                      variant="brand"
-                      size="small"
-                      data-role="reveal"
-                    >
-                      Reveal seed
-                    </wa-button>
-                  </div>
-                </div>
-              </div>
-              <div class="pass-card-face pass-card-back">
-                <div class="pass-card-header">
-                  <div class="pass-card-title-group">
-                    <wa-button
-                      type="button"
-                      appearance="outlined"
-                      variant="neutral"
-                      size="small"
-                      class="pass-hide-button"
-                      data-role="hide"
-                      aria-label="Hide seed"
-                      title="Hide seed"
-                    >
-                      <wa-icon name="arrow-left" aria-hidden="true"></wa-icon>
-                    </wa-button>
-                    <span class="pass-card-title">Seed phrase</span>
-                  </div>
-                  <div class="pass-actions">
-                    <wa-copy-button
-                      value="${escapeHtml(entry.seed)}"
-                      copy-label="Copy seed"
-                      success-label="Seed copied"
-                      error-label="Copy failed"
-                      data-role="copy-seed"
-                    ></wa-copy-button>
-                  </div>
-                </div>
-                <code class="pass-seed" aria-label="${safeSeed}">${safeSeedWords}</code>
-                <p class="pass-hint">Anyone with this seed can derive your pass credentials.</p>
-              </div>
-            </div>
-          </div>
-        `;
-    };
-
-    const renderPassResult = (container, entry, title, emptyMessage) => {
-      if (!container) {
-        return;
-      }
-      container.innerHTML = passResultTemplate(entry, title, emptyMessage);
-      container.classList.remove('is-hidden');
-
-      if (!entry) {
-        return;
-      }
-
-      const passName = entry.username || 'Web Pass';
-      const card = container.querySelector('[data-role="pass-card"]');
-      const avatarSlot = container.querySelector('[data-role="avatar"]');
-      if (avatarSlot) {
-        const avatar = createAvatar(entry.seed, passName);
-        avatarSlot.replaceWith(avatar);
-      }
-
-      const revealButton = container.querySelector('[data-role="reveal"]');
-      if (revealButton) {
-        revealButton.addEventListener('click', () => setCardFlipped(card, true));
-      }
-      const hideButton = container.querySelector('[data-role="hide"]');
-      if (hideButton) {
-        hideButton.addEventListener('click', () => setCardFlipped(card, false));
-      }
-      const seedCopy = container.querySelector('[data-role="copy-seed"]');
-      if (seedCopy) {
-        seedCopy.addEventListener('wa-copy', () => logEvent('Seed copied to clipboard.'));
-        seedCopy.addEventListener('wa-error', () => logEvent('Failed to copy Seed.'));
-      }
-      const locatorCopy = container.querySelector('[data-role="copy-locator"]');
-      if (locatorCopy && entry.locator) {
-        locatorCopy.addEventListener('wa-copy', () => logEvent('Locator copied to clipboard.'));
-        locatorCopy.addEventListener('wa-error', () => logEvent('Failed to copy Locator.'));
-      }
-    };
-
-    const renderConnectResult = (container, response, title, emptyMessage) => {
-      if (!container) {
-        return;
-      }
-      container.innerHTML = '';
-      container.classList.remove('is-hidden');
-
-      const header = document.createElement('div');
-      header.className = 'result-header';
-      const headerTitle = document.createElement('p');
-      headerTitle.className = 'result-title';
-      headerTitle.textContent = title;
-      header.appendChild(headerTitle);
-      container.appendChild(header);
-
-      if (!response) {
-        const empty = document.createElement('p');
-        empty.className = 'note';
-        empty.textContent = emptyMessage || 'No connect response yet.';
-        container.appendChild(empty);
-        return;
-      }
-
-      const status = document.createElement('p');
-      status.className = 'note';
-      status.textContent = `Connect result: ${response.result || 'unknown'}.`;
-      container.appendChild(status);
-
-      const addRow = (label, value) => {
-        if (!value) {
-          return;
-        }
-        const row = document.createElement('div');
-        row.className = 'result-row';
-        const rowLabel = document.createElement('span');
-        rowLabel.textContent = label;
-        const rowValue = document.createElement('code');
-        rowValue.textContent = value;
-        row.append(rowLabel, rowValue);
-        container.appendChild(row);
-      };
-
-      addRow('Locator', response.locator);
-      addRow('Public key', response.publicKey);
-      addRow('Signature', response.signature);
-      addRow('Auth JWT', response.authJwt || response.authzJwt);
-      if (response.locator && connectElement?.authStore?.get) {
-        const storedToken = connectElement.authStore.get(response.locator);
-        addRow('Stored JWT', storedToken);
-      }
-      addRow('Error', response.error);
-    };
-
-    createElement?.addEventListener('webpass:create', (event) => {
-      const entry = normalizeEntry(event.detail);
-      if (!entry) {
-        return;
-      }
-      writeStoredPass({ ...entry, createdOnLoad: true });
-      renderPassResult(createResult, entry, 'Created Web Pass', 'No Web Pass created yet.');
-      logEvent('Generated Web Pass seed phrase.');
-    });
-
-    createElement?.addEventListener('webpass:error', (event) => {
-      const message = event.detail?.message || 'Failed to generate Web Pass.';
-      logEvent(message);
-    });
-
-    loadElement?.addEventListener('webpass:load', (event) => {
-      const entry = normalizeEntry(event.detail);
-      if (!entry) {
-        return;
-      }
-      renderPassResult(loadResult, entry, 'Loaded Web Pass', 'No Web Pass loaded yet.');
-      logEvent('Loaded Web Pass seed phrase.');
-    });
-
-    connectElement?.addEventListener('webpass:connect-response', (event) => {
-      const response = event.detail;
-      if (!response || typeof response !== 'object') {
-        return;
-      }
-      renderConnectResult(connectResult, response, 'Connect Response', 'No connect response yet.');
-      logEvent(`Connect response: ${response.result || 'unknown'}.`);
-    });
-
-    connectElement?.addEventListener('webpass:connect-error', (event) => {
-      const message = event.detail?.message || event.detail?.error || 'Connect failed.';
-      renderConnectResult(connectResult, { result: 'error', error: message }, 'Connect Response', 'No connect response yet.');
-      logEvent(message);
-    });
-
-    await customElements.whenDefined('web-pass-form');
-    if (typeof createElement?.refreshFromAttributes === 'function') {
-      createElement.refreshFromAttributes();
-    }
-    if (typeof loadElement?.refreshFromAttributes === 'function') {
-      loadElement.refreshFromAttributes();
-    }
-    await customElements.whenDefined('web-pass-connect');
-    if (typeof connectElement?.refreshFromAttributes === 'function') {
-      connectElement.refreshFromAttributes();
-    }
-
-    const storedPass = readStoredPass();
-    if (storedPass && storedPass.createdOnLoad) {
-      const entry = normalizeEntry(storedPass);
-      if (entry) {
-        renderPassResult(createResult, entry, 'Created Web Pass', 'No Web Pass created yet.');
-      }
-      const nextPass = { ...storedPass };
-      delete nextPass.createdOnLoad;
-      writeStoredPass(nextPass);
-    } else if (storedPass) {
-      writeStoredPass(null);
-    }
-
-    const createForm = createElement?.form ?? createElement?.querySelector('form');
-    if (createForm) {
-      createForm.addEventListener('submit', () => {
-        logEvent('Form submitted to trigger a password manager save prompt.');
-      });
-    }
-
-    if (!storedPass || !storedPass.createdOnLoad) {
-      renderPassResult(createResult, null, 'Created Web Pass', 'No Web Pass created yet.');
-    }
-    renderPassResult(loadResult, null, 'Loaded Web Pass', 'No Web Pass loaded yet.');
-    renderConnectResult(connectResult, null, 'Connect Response', 'No connect response yet.');
-    logEvent('Demo ready. Create or load a Web Pass to begin.');
-  </script>
+  <script type="module" src="./main.js"></script>
 </body>
 
 </html>

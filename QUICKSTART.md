@@ -88,8 +88,8 @@ npm run demo
 ```
 
 This starts a local server at `http://localhost:5330` with the demo shell. The
-demo uses the bundled browser builds at `dist/wallet.js` and `dist/app.js` and
-reloads on changes.
+demo loads `src/wallet.ts` and `src/app.ts` through Vite, with hot reload during
+development.
 
 ## Development (if working on this repo)
 
@@ -112,11 +112,14 @@ npm install
 # One-time build
 npm run build
 
-# Watch mode
+# Watch package output to dist/
 npm run dev
 
-# Watch mode + live demo reload
+# Demo server with Vite HMR
 npm run dev:demo
+
+# Type-check without emitting files
+npm run typecheck
 
 # Run tests
 npm test
@@ -135,14 +138,15 @@ web-pass/
 │   ├── index.ts          # Aggregated entry point
 │   └── tests/
 │       └── web-pass.test.ts
-├── dist/                  # Compiled output
+├── dist/                 # Compiled output
 ├── demo/
-│   └── index.html        # Demo shell
+│   ├── index.html        # Demo shell
+│   └── main.js           # Demo bootstrap
 ├── scripts/
-│   ├── serve-demo.js     # Demo server with live reload
-│   └── dev.js            # Dev runner (tsc watch + optional demo)
+│   └── buffer-shim.js    # Browser Buffer shim for package bundles
 ├── package.json
 ├── tsconfig.json
+├── vite.demo.config.js   # Vite config for demo/
 └── [documentation files]
 ```
 

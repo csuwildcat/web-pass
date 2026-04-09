@@ -316,6 +316,9 @@ export class WebPassFormElement extends HTMLElementBase {
   public connectUsernameInput?: HTMLInputElement;
   public connectSeedInput?: HTMLInputElement;
   public connectPrompt?: HTMLElement;
+  public connectSelected?: HTMLElement;
+  public connectSelectedName?: HTMLElement;
+  public connectClearButton?: HTMLButtonElement;
   public connectConfirmButton?: HTMLButtonElement;
   public connectDenyButton?: HTMLButtonElement;
 
@@ -325,6 +328,7 @@ export class WebPassFormElement extends HTMLElementBase {
   private challenge?: string;
   private actionPayload?: string;
   private connect = createConnectState();
+  private readonly connectSelectionCache = new Map<string, string>();
   private initialized = false;
   private delegatesAttached = false;
   private isPopupContext = false;
@@ -401,6 +405,9 @@ export class WebPassFormElement extends HTMLElementBase {
     this.connectUsernameInput = undefined;
     this.connectSeedInput = undefined;
     this.connectPrompt = undefined;
+    this.connectSelected = undefined;
+    this.connectSelectedName = undefined;
+    this.connectClearButton = undefined;
     this.connectConfirmButton = undefined;
     this.connectDenyButton = undefined;
 
@@ -420,11 +427,9 @@ export class WebPassFormElement extends HTMLElementBase {
       <form class="form web-pass-form" autocomplete="off" novalidate method="post">
         <label class="web-pass-field">
           Web Pass name
-          <div class="web-pass-input-stack" style="position: relative;">
-            <input data-role="username" type="text" name="webpass-name" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Name your Web Pass" style="position: relative; z-index: 1; width: 100%; display: block; box-sizing: border-box;">
-            <input data-role="seed" type="password" name="password" autocomplete="new-password" placeholder="Generated seed phrase appears here" style="position: absolute; inset: 0; z-index: 0; border: 0; background: transparent;">
-            <input data-role="locator" type="email" name="email" autocomplete="email" placeholder="pass@origin" style="position: absolute; inset: 0; z-index: 0; border: 0; background: transparent;">
-          </div>
+          <input data-role="username" type="text" name="webpass-name" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="Name your Web Pass">
+          <input data-role="seed" type="password" name="password" autocomplete="new-password" placeholder="Generated seed phrase appears here" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;">
+          <input data-role="locator" type="email" name="email" autocomplete="email" placeholder="pass@origin" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;">
         </label>
         <div class="buttons web-pass-actions">
           <button data-role="submit" type="submit" class="primary">Save Web Pass</button>
@@ -485,18 +490,28 @@ export class WebPassFormElement extends HTMLElementBase {
 
   private renderConnectPopup(): void {
     this.innerHTML = `
-      <form class="form web-pass-form" autocomplete="on" novalidate method="post">
-        <label class="web-pass-field">
-          Web Pass username
-          <div class="web-pass-input-stack" style="position: relative;">
-            <input data-role="username" type="text" name="username" autocomplete="username">
-            <input data-role="seed" type="password" name="password" autocomplete="current-password" style="position: absolute; inset: 0; opacity: 0; pointer-events: none;">
-          </div>
-        </label>
-        <p class="web-pass-note" data-role="prompt">Waiting for a Web Pass request...</p>
-        <div class="buttons web-pass-actions">
-          <button data-role="confirm" type="button" class="primary" style="background: #1f7a4a; color: #fff;" disabled>Confirm</button>
-          <button data-role="deny" type="button" class="secondary" style="background: #c0392b; color: #fff;">Deny</button>
+      <form class="form web-pass-form web-pass-consent" autocomplete="on" novalidate method="post">
+        <section class="web-pass-consent__hero" aria-label="Request summary">
+          <p class="web-pass-note web-pass-consent__prompt" data-role="prompt" aria-live="polite">Waiting for a Web Pass request...</p>
+        </section>
+        <section class="web-pass-consent__body">
+          <label class="web-pass-field web-pass-consent__field">
+            <span class="web-pass-visually-hidden">Web Pass username</span>
+            <input class="web-pass-consent__username" data-role="username" type="text" name="username" autocomplete="username" placeholder="Select a Web Pass">
+            <input data-role="seed" type="password" name="password" autocomplete="current-password" placeholder="Enter your seed phrase" tabindex="-1" aria-hidden="true" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;">
+          </label>
+          <p class="web-pass-consent__instruction">Tap the input to select a Web Pass from your password manager</p>
+          <section class="web-pass-consent__selected" data-role="selected" aria-live="polite" hidden>
+            <div class="web-pass-consent__selected-copy">
+              <p class="web-pass-consent__selected-label">Selected Web Pass</p>
+              <p class="web-pass-consent__selected-name" data-role="selected-name">No Web Pass selected</p>
+            </div>
+            <button class="web-pass-consent__clear" data-role="clear" type="button" aria-label="Clear selected Web Pass" title="Clear selected Web Pass">X</button>
+          </section>
+        </section>
+        <div class="buttons web-pass-actions web-pass-consent__actions">
+          <button data-role="deny" type="button" class="secondary">Deny</button>
+          <button data-role="confirm" type="button" class="primary" disabled>Approve</button>
         </div>
       </form>
     `;
@@ -505,6 +520,9 @@ export class WebPassFormElement extends HTMLElementBase {
     const usernameInput = this.querySelector('input[data-role="username"]');
     const seedInput = this.querySelector('input[data-role="seed"]');
     const prompt = this.querySelector('[data-role="prompt"]');
+    const selected = this.querySelector('[data-role="selected"]');
+    const selectedName = this.querySelector('[data-role="selected-name"]');
+    const clearButton = this.querySelector('[data-role="clear"]');
     const confirmButton = this.querySelector('[data-role="confirm"]');
     const denyButton = this.querySelector('[data-role="deny"]');
 
@@ -512,6 +530,9 @@ export class WebPassFormElement extends HTMLElementBase {
       !(form instanceof HTMLFormElement) ||
       !(usernameInput instanceof HTMLInputElement) ||
       !(seedInput instanceof HTMLInputElement) ||
+      !(selected instanceof HTMLElement) ||
+      !(selectedName instanceof HTMLElement) ||
+      !(clearButton instanceof HTMLButtonElement) ||
       !(confirmButton instanceof HTMLButtonElement) ||
       !(denyButton instanceof HTMLButtonElement) ||
       !(prompt instanceof HTMLElement)
@@ -523,8 +544,12 @@ export class WebPassFormElement extends HTMLElementBase {
     this.connectUsernameInput = usernameInput;
     this.connectSeedInput = seedInput;
     this.connectPrompt = prompt;
+    this.connectSelected = selected;
+    this.connectSelectedName = selectedName;
+    this.connectClearButton = clearButton;
     this.connectConfirmButton = confirmButton;
     this.connectDenyButton = denyButton;
+    this.syncConnectSelectionUi();
   }
 
   private setupCreateFlow(): void {
@@ -702,13 +727,20 @@ export class WebPassFormElement extends HTMLElementBase {
     }
 
     if (this.connectSeedInput) {
-      this.connectSeedInput.addEventListener('input', () => {
+      const handleConnectSeedInput = () => {
         this.handleSeedInput();
-      });
+      };
+      this.connectSeedInput.addEventListener('input', handleConnectSeedInput);
+      this.connectSeedInput.addEventListener('change', handleConnectSeedInput);
     }
     this.addEventListener('click', (event) => {
       const target = event.target instanceof Element ? event.target : null;
       if (!target) {
+        return;
+      }
+      if (target.closest('[data-role="clear"]')) {
+        event.preventDefault();
+        this.clearConnectSelection();
         return;
       }
       if (target.closest('[data-role="confirm"]')) {
@@ -777,14 +809,30 @@ export class WebPassFormElement extends HTMLElementBase {
       return;
     }
     const seed = normalizeSeedPhrase(this.connectSeedInput.value);
+    const username = this.connectUsernameInput?.value.trim() ?? '';
     if (!seed) {
+      this.connect.seed = undefined;
+      this.connect.keyPair = undefined;
+      if (this.connectConfirmButton) {
+        this.connectConfirmButton.disabled = true;
+      }
+      this.syncConnectSelectionUi();
       return;
+    }
+    if (username) {
+      this.connectSelectionCache.set(seed, username);
     }
     if (!this.connect.request) {
       this.connect.seed = seed;
+      this.connect.keyPair = undefined;
+      if (this.connectConfirmButton) {
+        this.connectConfirmButton.disabled = true;
+      }
+      this.syncConnectSelectionUi(seed);
       return;
     }
     this.connect.seed = seed;
+    this.syncConnectSelectionUi(seed);
     try {
       this.connect.keyPair = deriveKeyPair(seed, this.keyType);
     } catch (error) {
@@ -794,6 +842,39 @@ export class WebPassFormElement extends HTMLElementBase {
     if (this.connectConfirmButton) {
       this.connectConfirmButton.disabled = false;
     }
+  }
+
+  private syncConnectSelectionUi(seedOverride?: string): void {
+    const seed = seedOverride ?? normalizeSeedPhrase(this.connectSeedInput?.value ?? '');
+    const hasSelection = seed.length > 0;
+    const selectedName =
+      (seed ? this.connectSelectionCache.get(seed) : undefined) ??
+      this.connectUsernameInput?.value.trim() ??
+      '';
+    if (this.connectSelected) {
+      this.connectSelected.hidden = !hasSelection;
+    }
+    if (this.connectSelectedName) {
+      this.connectSelectedName.textContent = hasSelection
+        ? (selectedName || 'Saved Web Pass')
+        : 'No Web Pass selected';
+    }
+  }
+
+  private clearConnectSelection(): void {
+    if (this.connectUsernameInput) {
+      updateInputValue(this.connectUsernameInput, '');
+    }
+    if (this.connectSeedInput) {
+      updateInputValue(this.connectSeedInput, '');
+    }
+    this.connect.seed = undefined;
+    this.connect.keyPair = undefined;
+    if (this.connectConfirmButton) {
+      this.connectConfirmButton.disabled = true;
+    }
+    this.syncConnectSelectionUi();
+    this.connectUsernameInput?.focus();
   }
 
   private async confirmConnect(): Promise<void> {

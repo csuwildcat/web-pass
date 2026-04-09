@@ -215,14 +215,13 @@ export class WebPassConnectElement extends HTMLElementBase {
     this.innerHTML = `
       <style>
         .web-pass-connect-row {
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
+          display: grid;
+          gap: 0.75rem;
         }
 
-        .web-pass-connect-row input {
-          flex: 1 1 auto;
-          min-width: 0;
+        .web-pass-connect-actions {
+          display: flex;
+          justify-content: flex-start;
         }
 
         .web-pass-connect-button[disabled] {
@@ -232,13 +231,15 @@ export class WebPassConnectElement extends HTMLElementBase {
         }
       </style>
       <form class="form web-pass-form" autocomplete="on" novalidate method="post">
-        <label class="web-pass-field">
-          Web Pass locator
-          <span class="web-pass-connect-row">
+        <div class="web-pass-connect-row">
+          <label class="web-pass-field">
+            Web Pass locator
             <input data-role="locator" type="email" name="email" autocomplete="email" placeholder="pass@origin">
+          </label>
+          <div class="web-pass-connect-actions">
             <button data-role="connect" type="button" class="primary web-pass-connect-button" disabled>Connect</button>
-          </span>
-        </label>
+          </div>
+        </div>
       </form>
     `;
 
