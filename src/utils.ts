@@ -107,3 +107,22 @@ export function normalizePopupPath(path: string | undefined): string {
   const trimmed = path.trim();
   return trimmed || DEFAULT_POPUP_PATH;
 }
+
+export function resolvePopupUrl(
+  path: string,
+  walletOrigin: string,
+  currentPageUrl?: string
+): URL {
+  const isRelativePath = !path.startsWith('/') && !/^[a-z][a-z\d+.-]*:/i.test(path);
+  if (isRelativePath && currentPageUrl) {
+    try {
+      const currentUrl = new URL(currentPageUrl);
+      if (currentUrl.origin === walletOrigin) {
+        return new URL(path, currentUrl);
+      }
+    } catch {
+      // Fall back to resolving the path against the wallet origin.
+    }
+  }
+  return new URL(path, walletOrigin);
+}

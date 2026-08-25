@@ -175,13 +175,31 @@ const keyPair = deriveKeyPair(seed, 'secp256k1');
 ### Quick commands
 
 ```bash
-npm run build      # Compile TypeScript + browser ESM bundles
-npm run dev        # Watch package TypeScript compilation
-npm run dev:demo   # Start Vite demo server (http://localhost:5330)
-npm run typecheck  # Type-check without emitting
-npm test           # Run unit tests
-npm test:watch    # Run tests in watch mode
+npm run dev         # Start the demo at http://localhost:5330 with HMR
+npm run test:watch  # Run source tests and rerun them when files change
+npm test            # Run the test suite once
+npm run typecheck   # Check TypeScript without emitting files
+npm run build       # Build the package and the deployable site
+npm run preview     # Serve the production site at http://localhost:5330
 ```
+
+`npm run dev` is the normal browser-development command. Vite resolves npm
+imports such as `buffer`, compiles TypeScript, and serves the app from a real
+localhost origin. Do not open `demo/index.html` with a `file://` URL or serve
+the source directory with an unbundled static server; browsers do not resolve
+bare npm module specifiers themselves.
+
+`npm run build` writes the publishable library to `dist/` and the complete
+static site to `site/`. The site uses relative asset URLs, so the same output
+works on a custom domain or below a GitHub Pages repository path. Use
+`npm run build:lib` or `npm run build:site` when only one output is needed.
+
+### GitHub Pages
+
+The workflow in `.github/workflows/pages-demo.yml` tests and builds the project
+on pushes to `main`, then deploys `site/`. In the repository settings, choose
+**GitHub Actions** as the Pages source. The build also includes `.nojekyll` so
+the `/.well-known` demo page is retained.
 
 ### Build Output
 
@@ -210,7 +228,8 @@ web-pass/
 │   └── buffer-shim.js      # Buffer polyfill for browser builds
 ├── package.json
 ├── tsconfig.json
-└── vite.demo.config.js
+├── vite.config.js        # Local server + deployable site build
+└── vitest.config.js      # Source test configuration
 ```
 
 ## Cryptography

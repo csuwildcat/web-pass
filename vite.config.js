@@ -6,38 +6,9 @@ const rootDir = fileURLToPath(new URL('.', import.meta.url));
 const demoDir = path.resolve(rootDir, 'demo');
 const siteDir = path.resolve(rootDir, 'site');
 
-function demoPostRedirect() {
-  return {
-    name: 'demo-post-redirect',
-    configureServer(server) {
-      server.middlewares.use((req, res, next) => {
-        if (req.method !== 'POST') {
-          next();
-          return;
-        }
-        const pathname = (() => {
-          try {
-            return new URL(req.url ?? '/', 'http://localhost').pathname;
-          } catch {
-            return '/';
-          }
-        })();
-        if (pathname !== '/') {
-          next();
-          return;
-        }
-        res.statusCode = 303;
-        res.setHeader('Location', '/');
-        res.end();
-      });
-    }
-  };
-}
-
 export default defineConfig(({ command }) => ({
   base: command === 'build' ? './' : '/',
   root: demoDir,
-  plugins: [demoPostRedirect()],
   server: {
     port: 5330,
     strictPort: true,
@@ -47,7 +18,8 @@ export default defineConfig(({ command }) => ({
   },
   preview: {
     port: 5330,
-    strictPort: true
+    strictPort: true,
+    host: '127.0.0.1'
   },
   build: {
     target: 'es2022',

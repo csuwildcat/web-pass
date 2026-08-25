@@ -84,12 +84,15 @@ import 'web-pass/wallet';
 
 ```bash
 npm install
-npm run demo
+npm run dev
 ```
 
 This starts a local server at `http://localhost:5330` with the demo shell. The
 demo loads `src/wallet.ts` and `src/app.ts` through Vite, with hot reload during
-development.
+development. `localhost` gives the app a real origin and is treated as a
+trustworthy local context by browsers; opening the HTML over `file://` does
+not. Vite also bundles bare package imports such as `buffer` that a browser
+cannot load directly.
 
 ## Development (if working on this repo)
 
@@ -109,23 +112,33 @@ npm install
 ### Build, watch, and test
 
 ```bash
-# One-time build
-npm run build
-
-# Watch package output to dist/
+# Local browser server with Vite HMR
 npm run dev
 
-# Demo server with Vite HMR
-npm run dev:demo
+# Watch source tests
+npm run test:watch
 
 # Type-check without emitting files
 npm run typecheck
 
-# Run tests
+# Run tests once
 npm test
+
+# Build the npm package in dist/ and static site in site/
+npm run build
+
+# Test the generated site locally
+npm run preview
 ```
 
-Tests live in `src/tests/` and are compiled to `dist/tests/` during builds.
+Tests live in `src/tests/` and run directly from TypeScript through Vitest, so
+the watch command does not depend on compiled files in `dist/`.
+
+The production site uses relative asset paths and includes the
+`.well-known/web-pass.html` popup, so the same `site/` directory works at a
+domain root or a GitHub Pages project path. Pushes to `main` are deployed by
+`.github/workflows/pages-demo.yml` after GitHub Pages is configured to use the
+**GitHub Actions** source.
 
 ### Project structure
 
@@ -146,13 +159,15 @@ web-pass/
 │   └── buffer-shim.js    # Browser Buffer shim for package bundles
 ├── package.json
 ├── tsconfig.json
-├── vite.demo.config.js   # Vite config for demo/
+├── vite.config.js        # Dev server + production site build
+├── vitest.config.js      # Source test runner
 └── [documentation files]
 ```
 
 ## Troubleshooting
 
-- If the demo does not load, run `npm run demo` and check the browser console.
+- If the demo does not load, run `npm run dev` and use the localhost URL Vite
+  prints. Do not open the HTML file directly.
 - If builds fail, run `npm run build` to see compiler errors.
 
 ## Next steps

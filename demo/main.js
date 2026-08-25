@@ -380,7 +380,8 @@ if (storedPass && storedPass.createdOnLoad) {
 
 const createForm = createElement?.form ?? createElement?.querySelector('form');
 if (createForm) {
-  createForm.addEventListener('submit', () => {
+  createForm.addEventListener('submit', (event) => {
+    event.preventDefault();
     logEvent('Form submitted to trigger a password manager save prompt.');
   });
 }

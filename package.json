@@ -31,16 +31,20 @@
     "dist/declarations.d.ts"
   ],
   "scripts": {
-    "build": "npm run build:tsc && npm run build:browser",
-    "build:tsc": "tsc",
+    "build": "npm run build:lib && npm run build:site",
+    "build:lib": "npm run build:types && npm run build:browser",
+    "build:types": "tsc",
+    "build:tsc": "npm run build:types",
     "build:browser": "esbuild src/index.ts src/wallet.ts src/app.ts --bundle --format=esm --platform=browser --target=es2020 --outdir=dist --entry-names=[name] --inject:./scripts/buffer-shim.js",
-    "build:demo": "vite build --config vite.demo.config.js",
-    "dev": "tsc --watch",
-    "dev:demo": "vite --config vite.demo.config.js",
+    "build:site": "vite build",
+    "build:demo": "npm run build:site",
+    "dev": "vite",
+    "dev:demo": "npm run dev",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "node --test dist/tests/**/*.test.js",
-    "test:watch": "node --test --watch dist/tests/**/*.test.js",
-    "demo": "vite --config vite.demo.config.js"
+    "test": "vitest run --config vitest.config.js",
+    "test:watch": "vitest --watch --config vitest.config.js",
+    "demo": "npm run dev"
   },
   "keywords": [
     "web-pass",
@@ -68,7 +72,8 @@
     "buffer": "^6.0.3",
     "esbuild": "^0.25.9",
     "typescript": "^5.9.3",
-    "vite": "^6.4.2"
+    "vite": "^6.4.3",
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "@noble/curves": "^2.0.1",

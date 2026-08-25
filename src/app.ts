@@ -14,7 +14,8 @@ import {
   fireEvent,
   formatLocator,
   normalizePopupPath,
-  parseLocator
+  parseLocator,
+  resolvePopupUrl
 } from './utils.js';
 
 export type {
@@ -359,7 +360,8 @@ export class WebPassConnectElement extends HTMLElementBase {
     }
     const protocol = typeof location !== 'undefined' && location.protocol ? location.protocol : 'https:';
     const origin = buildOriginFromDomain(parsed.domain, protocol);
-    const popupUrl = new URL(this.popupPath, origin);
+    const currentPageUrl = typeof location !== 'undefined' ? location.href : undefined;
+    const popupUrl = resolvePopupUrl(this.popupPath, origin, currentPageUrl);
     const popup = window.open(popupUrl.toString(), 'web-pass-connect', DEFAULT_CONNECT_WINDOW_FEATURES);
     if (!popup) {
       this.dispatchConnectError('Popup was blocked. Allow popups to connect a Web Pass.');

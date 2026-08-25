@@ -12,9 +12,13 @@ Contributions are welcome! Please follow these guidelines:
 
 ```bash
 npm install
-npm run build
+npm run typecheck
 npm test
+npm run build
 ```
+
+Use `npm run dev` for the localhost demo server and `npm run test:watch` while
+working on TypeScript source.
 
 ## Code Style
 
